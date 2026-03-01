@@ -1,0 +1,314 @@
+/* ===============================
+   GLOBAL RESET
+================================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:#0e0e0e;
+  color:#f2f2f2;
+  font-weight:300;
+  letter-spacing:.02em;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ===============================
+   LUXURY VARIABLES
+================================= */
+
+:root{
+  --black:#0e0e0e;
+  --black-soft:#151515;
+  --gold:#c6a84a;
+  --gold-soft:#a88932;
+  --soft:#9f9f9f;
+  --divider:#1f1f1f;
+}
+
+/* ===============================
+   TYPOGRAPHY SYSTEM
+================================= */
+
+h1,h2,h3{
+  font-family:'Playfair Display',serif;
+  font-weight:600;
+  letter-spacing:1px;
+}
+
+h1{
+  font-size:clamp(3rem,6vw,5rem);
+  line-height:1.08;
+}
+
+h2{
+  font-size:clamp(1.8rem,3vw,2.6rem);
+}
+
+h3{
+  font-size:1.3rem;
+}
+
+p{
+  font-size:16px;
+  line-height:1.9;
+  color:var(--soft);
+}
+
+/* Accent */
+
+.gold{ color:var(--gold); }
+
+.micro{
+  font-size:11px;
+  letter-spacing:.4em;
+  text-transform:uppercase;
+  color:var(--gold);
+}
+
+/* ===============================
+   LINKS
+================================= */
+
+a{
+  text-decoration:none;
+  color:inherit;
+  transition:.3s ease;
+}
+
+a:hover{
+  color:var(--gold);
+}
+
+/* ===============================
+   HEADER (Luxury Glass Dark)
+================================= */
+
+.site-header{
+  position:sticky;
+  top:0;
+  z-index:1200;
+  background:rgba(14,14,14,.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--divider);
+}
+
+.nav{
+  max-width:1400px;
+  margin:auto;
+  padding:0 50px;
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+/* Logo */
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.logo img{
+  height:38px;
+}
+
+.logo span{
+  font-family:'Playfair Display',serif;
+  font-size:18px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#fff;
+}
+
+/* Navigation */
+
+.nav-links{
+  display:flex;
+  gap:48px;
+  list-style:none;
+}
+
+.nav-links a{
+  font-size:12px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:#bdbdbd;
+  position:relative;
+  padding-bottom:6px;
+}
+
+.nav-links a::after{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:0;
+  height:1px;
+  background:var(--gold);
+  transition:.35s ease;
+}
+
+.nav-links a:hover{
+  color:#fff;
+}
+
+.nav-links a:hover::after{
+  width:100%;
+}
+
+/* ===============================
+   CART
+================================= */
+
+.cart-link{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+
+.cart-icon{
+  width:22px;
+  filter:invert(1);
+  transition:.3s ease;
+}
+
+.cart-link:hover .cart-icon{
+  transform:scale(1.15);
+}
+
+.cart-count{
+  position:absolute;
+  top:-8px;
+  right:-10px;
+  min-width:18px;
+  height:18px;
+  padding:0 6px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-soft));
+  color:#000;
+  font-size:10px;
+  font-weight:700;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 0 0 2px var(--black);
+}
+
+/* ===============================
+   FOOTER (Elegant Minimal)
+================================= */
+/* ===== PREMIUM FOOTER ===== */
+
+.footer{
+  background:#070707;
+  border-top:1px solid #1a1a1a;
+  padding:120px 8% 50px;
+}
+
+.footer-grid{
+  gap:90px;
+}
+
+.footer h3{
+  font-size:12px;
+  letter-spacing:.35em;
+  color:var(--gold);
+  margin-bottom:25px;
+}
+
+.footer p,
+.footer a{
+  font-size:14px;
+  color:#9a9a9a;
+}
+
+.footer a:hover{
+  color:var(--gold);
+}
+
+.footer-bottom{
+  margin-top:80px;
+  padding-top:25px;
+  border-top:1px solid #1a1a1a;
+  text-align:center;
+  font-size:11px;
+  letter-spacing:.2em;
+  color:#555;
+}
+
+/* ===============================
+   SECTION SPACING
+================================= */
+
+section{
+  padding:120px 8%;
+}
+
+/* ===============================
+   RESPONSIVE
+================================= */
+
+@media(max-width:768px){
+
+  .nav{
+    padding:0 20px;
+    height:68px;
+  }
+
+  .nav-links{
+    gap:20px;
+  }
+
+  .logo img{
+    height:30px;
+  }
+
+  h1{
+    font-size:2.4rem;
+  }
+
+  section{
+    padding:80px 6%;
+  }
+
+}/* ===== HAMBURGER FIX ===== */
+
+.hamburger{
+  display:none;
+}
+
+@media(max-width:768px){
+  .hamburger{
+    display:block;
+    font-size:22px;
+    color:#fff;
+  }
+
+  .nav-links{
+    display:none;
+  }
+
+  .nav-links.active{
+    display:flex;
+    flex-direction:column;
+    position:absolute;
+    top:68px;
+    right:0;
+    background:#111;
+    padding:20px;
+    width:220px;
+    border-left:1px solid #1c1c1c;
+  }
+}
+
