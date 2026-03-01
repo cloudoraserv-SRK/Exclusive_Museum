@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+   <title>Exclusive Museum | Luxury Perfumes & Premium Collections</title>
+<meta name="description" content="Exclusive Museum – Luxury Oud Perfumes, Leather Gift Sets & Premium Accessories. Crafted in India. Delivered Worldwide." />
+
+<meta property="og:title" content="Exclusive Museum | Luxury Redefined" />
+<meta property="og:description" content="Discover limited edition luxury perfumes and premium collections." />
+<meta property="og:image" content="assets/og/home.jpg" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="../assets/favicon/favicon.ico" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./cart.css" />
+  <link rel="stylesheet" href="../main.css"/>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+  <header class="site-header">
+  <nav class="nav">
+
+    <a href="index.html" class="logo">
+      <img src="../assets/images/logo.jpeg" alt="Shoe Museum">
+     <span>Exclusive Museum</span>
+    </a>
+  <a href="products/cart.html" class="cart-link">
+    <img src="../assets/images/cart.svg" class="cart-icon">
+    <span class="cart-count" id="cartCount">0</span>
+  </a>
+<div class="hamburger" id="hamburger">☰</div>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../products/index.html">Collections</a></li>
+<li><a href="../products/track.html">Track Order</a></li>
+<li><a href="#contact">Contact</a></li>
+      <li class="cart-item">
+</li>
+    </ul>
+  </nav>  
+</header>
+<!-- ================= CHECKOUT ================= -->
+<main class="checkout">
+  <div class="checkout-container">
+
+    <h1>Secure Checkout</h1>
+
+    <!-- ================= ORDER SUMMARY ================= -->
+    <div class="checkout-box">
+      <h3>Order Summary</h3>
+
+      <div id="orderSummary" class="order-summary">
+        <!-- JS will inject items -->
+      </div>
+
+      <div class="total-row">
+        <span>Total Amount</span>
+        <strong id="orderTotal">₹0</strong>
+      </div>
+    </div>
+
+    <!-- ================= CUSTOMER DETAILS ================= -->
+    <div class="checkout-box">
+      <h3>Customer Details</h3>
+
+      <input type="text" id="customerName" placeholder="Full Name" required>
+
+      <input type="email" id="customerEmail" placeholder="Email Address" required>
+
+      <input type="tel" id="customerPhone" placeholder="Mobile Number" required>
+
+      <textarea id="customerAddress" placeholder="Full Delivery Address" required></textarea>
+
+      <input type="text" id="customerCity" placeholder="City" required>
+
+      <input type="text" id="customerPincode" placeholder="Pincode" required>
+    </div>
+
+    <!-- ================= PAYMENT DETAILS ================= -->
+    <div class="checkout-box">
+      <h3>Payment Details</h3>
+
+      <!-- Cashfree required hidden fields -->
+      <input type="hidden" id="orderId">
+      <input type="hidden" id="orderAmount">
+      <input type="hidden" id="orderCurrency" value="INR">
+
+      <p class="secure-note">
+        You will be redirected to Cashfree to complete payment securely.
+      </p>
+    </div>
+
+    <!-- ================= PLACE ORDER ================= -->
+    <button id="payNowBtn" class="checkout-btn">
+      Pay Securely
+    </button>
+
+  </div>
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer" id="contact">
+
+
+  <div class="footer-container footer-grid">
+
+    <!-- BRAND -->
+    <div class="footer-col brand">
+      <h3>Exclusive Museum</h3>
+      <h1>LUXURY COLLECTIONS<br>GLOBAL DELIVERY</h1>
+<p>Curated premium products crafted for exclusivity.</p>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#why">Why Us</a></li>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#featured">Products</a></li>
+        <li><a href="./index.html">Shop</a></li>
+      </ul>
+    </div>
+
+        
+<!-- LEGAL -->
+<div class="footer-col">
+  <h4>Legal</h4>
+  <ul>
+    <li><a href="/products/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+<li><a href="/products/terms.html" target="_blank" rel="noopener noreferrer">Terms & Conditions</a></li>
+<li><a href="/products/shipping.html" target="_blank" rel="noopener noreferrer">Shipping & Returns</a></li>
+  </ul>
+</div>
+
+    
+    <!-- CONTACT -->
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="contact-list">
+        <li>📞 <a href="tel:+919532153763">+91 95-32-153-763</a></li>
+        <li>📧 <a href="mailto:hello@secretsanctuary.in">sales@exclusivemuseum.cloud</a></li>
+        <li>💬 <a href="https://wa.me/919532153763" target="_blank">WhatsApp Us</a></li>
+      </ul>
+    </div>
+
+  <!-- FOOTER BOTTOM -->
+  <div class="footer-bottom">
+  <span>© 2026 Exclusive Museum. All Rights Reserved.</span>
+  </div>
+</footer>
+
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<!-- =========================
+   LOAD CART
+========================= -->
+
+<script>
+const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+const orderSummary = document.getElementById("orderSummary");
+const orderTotal = document.getElementById("orderTotal");
+const payBtn = document.getElementById("payNowBtn");
+
+let total = 0;
+
+cart.forEach(item => {
+  const row = document.createElement("div");
+  row.className = "order-item";
+  row.innerHTML = `
+    <span>${item.name} × ${item.qty}</span>
+    <span>₹${item.price * item.qty}</span>
+  `;
+  orderSummary.appendChild(row);
+  total += item.price * item.qty;
+});
+
+orderTotal.innerText = `₹${total}`;
+
+payBtn.addEventListener("click", async () => {
+
+  const name = customerName.value.trim();
+  const email = customerEmail.value.trim();
+  const phone = customerPhone.value.trim();
+  const address = customerAddress.value.trim();
+  const city = customerCity.value.trim();
+  const pincode = customerPincode.value.trim();
+
+  if (!name || !email || !phone || !address || !city || !pincode) {
+    alert("Please fill all details");
+    return;
+  }
+
+  if (!cart.length) {
+    alert("Cart empty");
+    return;
+  }
+
+  payBtn.disabled = true;
+  payBtn.innerText = "Processing...";
+
+  try {
+
+   const res = await fetch(
+  "https://vxdulkarabqzdwfjckis.supabase.co/functions/v1/create-payment",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHVsa2FyYWJxemR3Zmpja2lzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDc5ODQsImV4cCI6MjA4MzgyMzk4NH0.LlWNzi9-ys6UdEqdlwe82FZ-lQTGAGKCml5cfCEt9j0",
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHVsa2FyYWJxemR3Zmpja2lzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDc5ODQsImV4cCI6MjA4MzgyMzk4NH0.LlWNzi9-ys6UdEqdlwe82FZ-lQTGAGKCml5cfCEt9j0"
+    },
+    body: JSON.stringify({
+      amount: total,
+      customer: {
+        id: "cust_" + Date.now(),
+        name,
+        email,
+        phone
+      }
+    })
+  }
+);
+
+    const data = await res.json();
+
+    if (!data.payment_session_id) {
+      alert("Payment creation failed");
+      payBtn.disabled = false;
+      payBtn.innerText = "Pay Securely";
+      return;
+    }
+
+    const cashfree = Cashfree({
+      mode: "production"   // sandbox use karo agar test mode hai
+    });
+
+    cashfree.checkout({
+      paymentSessionId: data.payment_session_id,
+      redirectTarget: "_self"
+    });
+
+  } catch (err) {
+    alert("Payment failed");
+    payBtn.disabled = false;
+    payBtn.innerText = "Pay Securely";
+  }
+
+});
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+

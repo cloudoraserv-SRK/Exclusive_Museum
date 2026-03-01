@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+   <title>Exclusive Museum | Luxury Perfumes & Premium Collections</title>
+<meta name="description" content="Exclusive Museum – Luxury Oud Perfumes, Leather Gift Sets & Premium Accessories. Crafted in India. Delivered Worldwide." />
+
+<meta property="og:title" content="Exclusive Museum | Luxury Redefined" />
+<meta property="og:description" content="Discover limited edition luxury perfumes and premium collections." />
+<meta property="og:image" content="assets/og/home.jpg" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="../assets/favicon/favicon.ico" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./cart.css" />
+  <link rel="stylesheet" href="../main.css"/>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+  <header class="site-header">
+  <nav class="nav">
+
+    <a href="index.html" class="logo">
+      <img src="../assets/images/logo.jpeg" alt="Shoe Museum">
+     <span>Exclusive Museum</span>
+    </a>
+  <a href="../products/cart.html" class="cart-link">
+    <img src="../assets/images/cart.svg" class="cart-icon">
+    <span class="cart-count" id="cartCount">0</span>
+  </a>
+<div class="hamburger" id="hamburger">☰</div>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../products/index.html">Collections</a></li>
+<li><a href="../products/track.html">Track Order</a></li>
+<li><a href="#contact">Contact</a></li>
+      <li class="cart-item">
+</li>
+    </ul>
+  </nav>  
+</header>
+<!-- ================= PRODUCT PAGE ================= -->
+<main class="product-page">
+
+  <!-- LEFT : GALLERY -->
+  <section class="product-media">
+    <div class="gallery-wrap">
+      <div id="thumbs" class="gallery-thumbs"></div>
+      <div id="galleryMain" class="gallery-main"></div>
+    </div>
+  </section>
+
+  <!-- RIGHT : INFO -->
+  <section class="product-info">
+<div id="productBrand"></div>
+
+    <h1 id="productName">Loading...</h1>
+
+    <p id="productDesc" class="product-desc"></p>
+
+    <!-- PRICE -->
+    <div class="product-actions">
+      <div>
+        <span id="productMrp"></span>
+        <span id="productPrice" class="price">₹0</span>
+      </div>
+      <div class="discount-box">
+  🎁 Pay via Amazon Gift Card, Voucher or Crypto  
+  <strong>Get Flat 40% OFF</strong>
+</div>
+      <div class="delivery-box">
+  <h4>Check Delivery</h4>
+
+  <div class="delivery-input">
+    <input type="text" id="pincodeInput" placeholder="Enter Pincode">
+    <button id="checkDeliveryBtn">Check</button>
+  </div>
+
+  <p id="deliveryResult" class="delivery-result"></p>
+</div>
+
+      <button id="addToCartBtn">Add to Cart</button>
+    </div>
+<div class="payment-options">
+  <h4>Payment Options</h4>
+  <ul>
+    <li>Amazon Gift Card (40% OFF)</li>
+    <li>Other Gift Vouchers</li>
+    <li>PayPal</li>
+    <li>Bitcoin</li>
+    <li>Account Transfer</li>
+  </ul>
+</div>
+    <!-- TRUST -->
+    <div class="product-trust">
+      <span>100% Original</span>
+      <span>Quality Checked</span>
+      <span>Best Price</span>
+    </div>
+
+    <!-- COLORS -->
+    <div class="option-block">
+      <h4>Color</h4>
+      <div id="colors" class="color-box"></div>
+    </div>
+
+    <!-- SIZES -->
+    <div class="option-block">
+      <h4>Size</h4>
+      <div id="sizes" class="size-box"></div>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="product-long-desc">
+      <p id="longDesc"></p>
+    </div>
+
+  </section>
+</main>
+
+<!-- ================= RELATED PRODUCTS ================= -->
+<section class="related-section">
+  <h2>You may also like</h2>
+  <div id="relatedGrid" class="related-grid"></div>
+
+  <button id="loadMoreRelated" class="load-more-btn">
+    Load More
+  </button>
+</section>
+
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer" id="contact">
+
+
+  <div class="footer-container footer-grid">
+
+    <!-- BRAND -->
+    <div class="footer-col brand">
+      <h3>Exclusive Museum</h3>
+      <h1>LUXURY COLLECTIONS<br>GLOBAL DELIVERY</h1>
+<p>Curated premium products crafted for exclusivity.</p>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#why">Why Us</a></li>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#featured">Products</a></li>
+        <li><a href="./index.html">Shop</a></li>
+      </ul>
+    </div>
+
+        <!-- LEGAL -->
+<!-- LEGAL -->
+<div class="footer-col">
+  <h4>Legal</h4>
+  <ul>
+    <li><a href="/products/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+<li><a href="/products/terms.html" target="_blank" rel="noopener noreferrer">Terms & Conditions</a></li>
+<li><a href="/products/shipping.html" target="_blank" rel="noopener noreferrer">Shipping & Returns</a></li>
+  </ul>
+</div>
+
+
+   
+    <!-- CONTACT -->
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="contact-list">
+        <li>📞 <a href="tel:+919532153763">+91 95-32-153-763</a></li>
+        <li>📧 <a href="mailto:hello@secretsanctuary.in">sales@exclusivemuseum.cloud</a></li>
+        <li>💬 <a href="https://wa.me/919532153763" target="_blank">WhatsApp Us</a></li>
+      </ul>
+    </div>
+
+  <!-- FOOTER BOTTOM -->
+  <div class="footer-bottom">
+  <span>© 2026 Exclusive Museum. All Rights Reserved.</span>
+  </div>
+</footer>
+<script type="module" src="../script.js"></script>
+<script type="module" src="./product.js"></script>
+<script type="module" src="./related-product.js"></script>
+
+</body>
+</html>
+
+
+
