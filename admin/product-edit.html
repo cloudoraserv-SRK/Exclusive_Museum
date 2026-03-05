@@ -15,87 +15,168 @@
 
 <main class="admin-layout">
 
-  <!-- PRODUCT DETAILS -->
-  <section class="card">
-    <h2>Product Details</h2>
 
-    <label>Name</label>
-    <input id="name" type="text">
+<!-- PRODUCT DETAILS -->
+<section class="card">
+<h2>Product Details</h2>
 
-    <label>Slug</label>
-    <input id="slug" type="text">
+<label>Name</label>
+<input id="name" type="text">
 
-    <div class="grid-2">
-      <div>
-        <label>MRP</label>
-        <input id="mrp" type="number">
-      </div>
-      <div>
-        <label>Price</label>
-        <input id="price" type="number">
-      </div>
-    </div>
+<label>Slug</label>
+<input id="slug" type="text">
 
-    <label>Short Description</label>
-    <textarea id="shortDesc"></textarea>
+<div class="grid-2">
 
-    <label>Long Description</label>
-    <textarea id="longDesc"></textarea>
+<div>
+<label>MRP</label>
+<input id="mrp" type="number">
+</div>
 
-    <label class="checkbox-row">
-      <input type="checkbox" id="active"> Active
-    </label>
-  </section>
+<div>
+<label>Price</label>
+<input id="price" type="number">
+</div>
 
-  <!-- BRAND & CATEGORY -->
-  <section class="card">
-    <h2>Brand & Category</h2>
+</div>
 
-    <label>Brand</label>
-    <select id="brand"></select>
+<label>Short Description</label>
+<textarea id="shortDesc"></textarea>
 
-    <label>Category</label>
-    <select id="category"></select>
-  </section>
+<label>Long Description</label>
+<textarea id="longDesc"></textarea>
 
-  <!-- VARIANTS (READ ONLY) -->
-  <section class="card" id="variantsSection">
-    <h2>Variants</h2>
+<label class="checkbox-row">
+<input type="checkbox" id="active"> Active
+</label>
 
-    <label>Color</label>
-    <select id="colorSelect"></select>
+</section>
 
-    <div id="sizeList" class="size-readonly"></div>
 
-    <p class="note">
-      Variants & sizes are managed separately.
-    </p>
+<!-- BRAND CATEGORY -->
+<section class="card">
 
-    <a href="#" id="variantsBtn" class="btn-secondary">
-      ⚙️ Manage Variants
-    </a>
-  </section>
+<h2>Brand & Category</h2>
 
-  <!-- IMAGES -->
-  <section class="card">
-    <h2>Images</h2>
+<label>Brand</label>
+<select id="brand"></select>
 
-    <p class="muted">
-      Upload images for selected variant.
-    </p>
+<label>Category</label>
+<select id="category"></select>
 
-    <input type="file" id="images" multiple>
+</section>
 
-    <div id="imageGallery" class="image-gallery"></div>
 
-    <button id="syncImagesBtn" class="btn-outline">
-      🔄 Sync Images
-    </button>
-  </section>
+<!-- VARIANTS -->
+<section class="card" id="variantsSection">
 
-  <button id="saveProduct" class="btn-primary">
-    Save Product
-  </button>
+<h2>Variants</h2>
+
+<label>Color</label>
+<select id="colorSelect"></select>
+
+<div id="sizeList" class="size-readonly"></div>
+
+<p class="note">
+Variants & sizes are managed separately.
+</p>
+
+<a href="#" id="variantsBtn" class="btn-secondary">
+⚙ Manage Variants
+</a>
+
+</section>
+
+
+<!-- IMAGES -->
+<section class="card">
+
+<h2>Images</h2>
+
+<p class="muted">
+Upload images for selected variant
+</p>
+
+<input type="file" id="images" multiple>
+
+<div id="dropZone">
+Drop images here
+</div>
+
+<div id="imageGallery" class="image-gallery"></div>
+<label>Image Type</label>
+
+<select id="imageType">
+<option value="hero">Hero</option>
+<option value="side">Side</option>
+<option value="dial">Dial</option>
+<option value="bracelet">Bracelet</option>
+<option value="packaging">Packaging</option>
+<option value="story">Story</option>
+</select>
+<button id="syncImagesBtn" class="btn-outline">
+Sync Images
+</button>
+
+</section>
+
+
+<!-- PRODUCT SPECIFICATIONS -->
+<section class="card">
+
+<h2>Specifications</h2>
+
+<div id="specList"></div>
+
+<button id="addSpec" class="btn-outline">
++ Add Specification
+</button>
+
+</section>
+
+<!-- Materials-->
+<section class="card">
+
+<h2>Materials</h2>
+
+<label>Gold Type</label>
+<input id="goldType">
+
+<label>Gold Weight (grams)</label>
+<input id="goldWeight">
+
+<label>Diamond Carat</label>
+<input id="diamondCarat">
+
+<label>Diamond Count</label>
+<input id="diamondCount">
+
+<label>Wood Type</label>
+<input id="woodType">
+
+</section>
+<!--customization-->
+<section class="card">
+
+<h2>Customization</h2>
+
+<label><input type="checkbox" value="dial engraving" class="customOpt"> Dial Engraving</label>
+
+<label><input type="checkbox" value="bracelet engraving" class="customOpt"> Bracelet Engraving</label>
+
+<label><input type="checkbox" value="diamond lettering" class="customOpt"> Diamond Lettering</label>
+
+<label><input type="checkbox" value="family engraving" class="customOpt"> Family Engraving</label>
+
+</section>
+<!-- SAVE -->
+<section class="card">
+
+<button id="saveProduct" class="btn-primary">
+Save Product
+</button>
+
+</section>
 
 </main>
 

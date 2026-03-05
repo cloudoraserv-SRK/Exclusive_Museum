@@ -2,228 +2,406 @@ import { supabase } from "./supabaseClient.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-  const id = new URLSearchParams(location.search).get("id");
-  if (!id) return location.href = "products.html";
+const id = new URLSearchParams(location.search).get("id");
+if(!id) location.href="products.html";
 
-  /* ========= ELEMENTS ========= */
-  const name = document.getElementById("name");
-  const slug = document.getElementById("slug");
-  const mrp = document.getElementById("mrp");
-  const price = document.getElementById("price");
-  const shortDesc = document.getElementById("shortDesc");
-  const longDesc = document.getElementById("longDesc");
-  const active = document.getElementById("active");
-  const saveBtn = document.getElementById("saveProduct");
+/* elements */
 
-  const brand = document.getElementById("brand");
-  const category = document.getElementById("category");
+const name=document.getElementById("name");
+const slug=document.getElementById("slug");
+const mrp=document.getElementById("mrp");
+const price=document.getElementById("price");
+const shortDesc=document.getElementById("shortDesc");
+const longDesc=document.getElementById("longDesc");
+const active=document.getElementById("active");
 
-  const colorSelect = document.getElementById("colorSelect");
-  const sizeList = document.getElementById("sizeList");
+const brand=document.getElementById("brand");
+const category=document.getElementById("category");
 
-  const imageInput = document.getElementById("images");
-  const imageGallery = document.getElementById("imageGallery");
+const colorSelect=document.getElementById("colorSelect");
+const sizeList=document.getElementById("sizeList");
 
-  let variants = [];
-  let currentVariant = null;
+const imageInput=document.getElementById("images");
+const dropZone=document.getElementById("dropZone");
+const imageGallery=document.getElementById("imageGallery");
 
-  /* ========= LOAD PRODUCT ========= */
+const specList=document.getElementById("specList");
 
-  async function loadProduct() {
+const goldType=document.getElementById("goldType");
+const goldWeight=document.getElementById("goldWeight");
+const diamondCarat=document.getElementById("diamondCarat");
+const diamondCount=document.getElementById("diamondCount");
+const woodType=document.getElementById("woodType");
 
-    const { data } = await supabase
-      .from("products")
-      .select("*")
-      .eq("id", id)
-      .single();
+const saveBtn=document.getElementById("saveProduct");
 
-    if (!data) return;
+let variants=[];
+let currentVariant=null;
 
-    name.value = data.name ?? "";
-    slug.value = data.slug ?? "";
-    mrp.value = data.mrp ?? "";
-    price.value = data.price ?? "";
-    shortDesc.value = data.short_description ?? "";
-    longDesc.value = data.long_description ?? "";
-    active.checked = !!data.active;
+/* slug auto */
 
-    await loadBrands(data.brand_id);
-    await loadCategories(data.category_id);
-    await loadVariants();
-  }
+name.addEventListener("input",()=>{
 
-  async function loadBrands(selected) {
-    const { data } = await supabase.from("brands").select("id,name");
-    brand.innerHTML = data.map(b =>
-      `<option value="${b.id}" ${b.id === selected ? "selected" : ""}>${b.name}</option>`
-    ).join("");
-  }
+slug.value=name.value
+.toLowerCase()
+.trim()
+.replace(/[^\w\s-]/g,"")
+.replace(/\s+/g,"-");
 
-  async function loadCategories(selected) {
-    const { data } = await supabase.from("categories").select("id,name");
-    category.innerHTML = data.map(c =>
-      `<option value="${c.id}" ${c.id === selected ? "selected" : ""}>${c.name}</option>`
-    ).join("");
-  }
+});
 
-  /* ========= VARIANTS ========= */
+/* image optimizer */
 
-  async function loadVariants() {
+async function optimizeImage(file){
 
-    const { data } = await supabase
-      .from("variants")
-      .select(`
-        id,
-        color,
-        image_gallery,
-        variant_stock ( size, stock )
-      `)
-      .eq("product_id", id);
+const img=await createImageBitmap(file);
 
-    variants = data || [];
+const canvas=document.createElement("canvas");
 
-    if (!variants.length) {
-      colorSelect.innerHTML = `<option>No variants</option>`;
-      colorSelect.disabled = true;
-      sizeList.innerHTML = "";
-      imageGallery.innerHTML = "";
-      return;
-    }
+const max=1600;
 
-    colorSelect.disabled = false;
+const scale=Math.min(max/img.width,max/img.height,1);
 
-    colorSelect.innerHTML = variants
-      .map((v, i) =>
-        `<option value="${i}">${v.color || "Default"}</option>`
-      ).join("");
+canvas.width=img.width*scale;
+canvas.height=img.height*scale;
 
-    colorSelect.value = 0;
-    selectVariant();
-  }
+const ctx=canvas.getContext("2d");
 
-  function selectVariant() {
-    currentVariant = variants[Number(colorSelect.value)];
-    if (!currentVariant) return;
+ctx.drawImage(img,0,0,canvas.width,canvas.height);
 
-    renderImages();
-    renderSizes();
-  }
+return new Promise(res=>canvas.toBlob(blob=>res(blob),"image/webp",0.85));
 
-  colorSelect.onchange = selectVariant;
+}
 
-  /* ========= IMAGES ========= */
+/* load product */
 
-  function renderImages() {
+async function loadProduct(){
 
-    imageGallery.innerHTML = "";
+const {data}=await supabase
+.from("products")
+.select("*")
+.eq("id",id)
+.single();
 
-    if (!currentVariant.image_gallery?.length) return;
+if(!data) return;
 
-    currentVariant.image_gallery.forEach((path, i) => {
+name.value=data.name||"";
+slug.value=data.slug||"";
+mrp.value=data.mrp||"";
+price.value=data.price||"";
+shortDesc.value=data.short_description||"";
+longDesc.value=data.long_description||"";
+active.checked=!!data.active;
 
-      const url = supabase.storage
-        .from("products")
-        .getPublicUrl(path).data.publicUrl;
+await loadVariants();
+await loadSpecs();
 
-      imageGallery.innerHTML += `
-        <div class="img-box">
-          <img src="${url}" width="100">
-          <button data-i="${i}" class="remove-img">✕</button>
-        </div>`;
-    });
+}
 
-    imageGallery.querySelectorAll(".remove-img").forEach(btn => {
-      btn.onclick = () => removeImage(+btn.dataset.i);
-    });
-  }
+/* variants */
 
-  imageInput.onchange = async () => {
+async function loadVariants(){
 
-    if (!currentVariant) return alert("No variant selected");
+const {data}=await supabase
+.from("variants")
+.select(`
+id,
+color,
+image_gallery,
+variant_stock(size,stock)
+`)
+.eq("product_id",id);
 
-    const gallery = [...(currentVariant.image_gallery || [])];
+variants=data||[];
 
-    for (const file of imageInput.files) {
+if(!variants.length){
+colorSelect.innerHTML=`<option>No variants</option>`;
+return;
+}
 
-      const safe = file.name.replace(/\s+/g, "-").toLowerCase();
-      const path = `${slug.value}/${Date.now()}-${safe}`;
+colorSelect.innerHTML=variants.map((v,i)=>
+`<option value="${i}">${v.color||"Default"}</option>`
+).join("");
 
-      await supabase.storage
-        .from("products")
-        .upload(path, file, { upsert: true });
+selectVariant();
 
-      gallery.push(path);
-    }
+}
 
-    await supabase
-      .from("variants")
-      .update({ image_gallery: gallery })
-      .eq("id", currentVariant.id);
+function selectVariant(){
 
-    currentVariant.image_gallery = gallery;
-    imageInput.value = "";
-    renderImages();
-  };
+currentVariant=variants[colorSelect.value];
 
-  async function removeImage(i) {
+renderImages();
+renderSizes();
 
-    const path = currentVariant.image_gallery[i];
+}
 
-    await supabase.storage
-      .from("products")
-      .remove([path]);
+colorSelect.onchange=selectVariant;
 
-    const updated = currentVariant.image_gallery
-      .filter((_, idx) => idx !== i);
+/* render images */
 
-    await supabase
-      .from("variants")
-      .update({ image_gallery: updated })
-      .eq("id", currentVariant.id);
+function renderImages(){
 
-    currentVariant.image_gallery = updated;
-    renderImages();
-  }
+imageGallery.innerHTML="";
 
-  /* ========= SIZES ========= */
+if(!currentVariant?.image_gallery) return;
 
-  function renderSizes() {
+currentVariant.image_gallery.forEach((path,i)=>{
 
-    sizeList.innerHTML = "";
+const {data}=supabase.storage
+.from("product-images")
+.getPublicUrl(path,{
+transform:{width:300,quality:80}
+});
 
-    const stockData = currentVariant.variant_stock || [];
+const url=data.publicUrl;
 
-    if (!stockData.length) {
-      sizeList.innerHTML = `<div>No sizes</div>`;
-      return;
-    }
+const hero=i===0 ? "hero-img" : "";
 
-    stockData.forEach(s => {
-      sizeList.innerHTML +=
-        `<div>Size ${s.size} | Stock ${s.stock}</div>`;
-    });
-  }
+imageGallery.innerHTML+=`
+<div class="img-box ${hero}" draggable="true" data-i="${i}">
+<img src="${url}">
+<button class="remove-img" data-i="${i}">✕</button>
+</div>
+`;
 
-  /* ========= SAVE PRODUCT ========= */
+});
 
-  saveBtn.onclick = async () => {
+initDrag();
 
-    await supabase.from("products")
-      .update({
-        name: name.value,
-        slug: slug.value,
-        mrp: mrp.value || null,
-        price: price.value || null,
-        short_description: shortDesc.value,
-        long_description: longDesc.value,
-        active: active.checked,
-        brand_id: brand.value,
-        category_id: category.value
-      })
-      .eq("id", id);
+document.querySelectorAll(".remove-img").forEach(btn=>{
+btn.onclick=()=>removeImage(btn.dataset.i);
+});
 
-    alert("✅ Product updated");
-  };
+}
 
-  loadProduct();
+/* upload images */
+
+async function uploadImages(files){
+
+if(!currentVariant) return alert("Select variant");
+
+let gallery=[...(currentVariant.image_gallery||[])];
+
+for(const file of files){
+
+const optimized=await optimizeImage(file);
+
+const clean=file.name
+.replace(/\.[^/.]+$/,"")
+.replace(/[^a-z0-9]/gi,"-")
+.toLowerCase();
+
+const path=`${slug.value}/${Date.now()}-${clean}.webp`;
+
+const {error}=await supabase.storage
+.from("product-images")
+.upload(path,optimized,{
+contentType:"image/webp",
+upsert:true
+});
+
+if(error){
+console.error(error);
+continue;
+}
+
+gallery.push(path);
+
+}
+
+await updateGallery(gallery);
+
+}
+
+/* update gallery */
+
+async function updateGallery(gallery){
+
+await supabase
+.from("variants")
+.update({image_gallery:gallery})
+.eq("id",currentVariant.id);
+
+currentVariant.image_gallery=gallery;
+
+renderImages();
+
+}
+
+/* drag reorder */
+
+function initDrag(){
+
+let dragIndex;
+
+document.querySelectorAll(".img-box").forEach(box=>{
+
+box.ondragstart=e=>{
+dragIndex=box.dataset.i;
+};
+
+box.ondragover=e=>e.preventDefault();
+
+box.ondrop=e=>{
+
+const dropIndex=box.dataset.i;
+
+const gallery=[...currentVariant.image_gallery];
+
+const dragged=gallery.splice(dragIndex,1)[0];
+
+gallery.splice(dropIndex,0,dragged);
+
+updateGallery(gallery);
+
+};
+
+});
+
+}
+
+/* delete image */
+
+async function removeImage(i){
+
+const path=currentVariant.image_gallery[i];
+
+await supabase.storage
+.from("product-images")
+.remove([path]);
+
+const gallery=currentVariant.image_gallery.filter((_,idx)=>idx!=i);
+
+await updateGallery(gallery);
+
+}
+
+/* drag drop */
+
+dropZone.ondragover=e=>{
+e.preventDefault();
+dropZone.classList.add("drag");
+};
+
+dropZone.ondragleave=()=>{
+dropZone.classList.remove("drag");
+};
+
+dropZone.ondrop=e=>{
+e.preventDefault();
+dropZone.classList.remove("drag");
+
+uploadImages([...e.dataTransfer.files]);
+
+};
+
+imageInput.onchange=e=>{
+uploadImages([...e.target.files]);
+};
+
+/* sizes */
+
+function renderSizes(){
+
+sizeList.innerHTML="";
+
+(currentVariant.variant_stock||[]).forEach(s=>{
+sizeList.innerHTML+=`<div>Size ${s.size} | Stock ${s.stock}</div>`;
+});
+
+}
+
+/* specs */
+
+async function loadSpecs(){
+
+const {data}=await supabase
+.from("product_specs")
+.select("*")
+.eq("product_id",id);
+
+specList.innerHTML="";
+
+(data||[]).forEach(s=>{
+
+specList.innerHTML+=`
+<div class="spec-row">
+<input value="${s.spec_name}">
+<input value="${s.spec_value}">
+</div>
+`;
+
+});
+
+}
+
+document.getElementById("addSpec").onclick=()=>{
+
+specList.innerHTML+=`
+<div class="spec-row">
+<input placeholder="Spec name">
+<input placeholder="Value">
+</div>
+`;
+
+};
+
+/* save product */
+
+saveBtn.onclick=async()=>{
+
+await supabase
+.from("products")
+.update({
+name:name.value,
+slug:slug.value,
+mrp:mrp.value||null,
+price:price.value||null,
+short_description:shortDesc.value,
+long_description:longDesc.value,
+active:active.checked
+})
+.eq("id",id);
+
+/* materials */
+
+await supabase
+.from("product_materials")
+.upsert({
+product_id:id,
+gold_type:goldType.value,
+gold_weight:goldWeight.value,
+diamond_carat:diamondCarat.value,
+diamond_count:diamondCount.value,
+wood_type:woodType.value
+});
+
+/* customization */
+
+const options=[...document.querySelectorAll(".customOpt:checked")]
+.map(o=>o.value);
+
+await supabase
+.from("product_customization")
+.delete()
+.eq("product_id",id);
+
+for(const opt of options){
+
+await supabase
+.from("product_customization")
+.insert({
+product_id:id,
+option_name:opt
+});
+
+}
+
+alert("Product updated");
+
+};
+
+loadProduct();
+
 });
