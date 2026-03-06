@@ -2,15 +2,11 @@
 
 body{
 margin:0;
-font-family: "Helvetica Neue", Arial, sans-serif;
-background:#0b0b0b;
-color:#fff;
+font-family:"Helvetica Neue",Arial,sans-serif;
+background:#0a0a0a;
+color:#f5f5f5;
 line-height:1.6;
-}
-
-img{
-max-width:100%;
-display:block;
+scroll-behavior:smooth;
 }
 
 /* ================= PRODUCT LAYOUT ================= */
@@ -19,12 +15,18 @@ display:block;
 max-width:1400px;
 margin:auto;
 padding:80px 30px;
+animation:pageFade 1.2s ease;
+}
+
+@keyframes pageFade{
+from{opacity:0; transform:translateY(40px);}
+to{opacity:1; transform:translateY(0);}
 }
 
 .lux-grid{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:80px;
+gap:90px;
 align-items:start;
 }
 
@@ -37,21 +39,21 @@ top:100px;
 
 .lux-main-image{
 background:#111;
-border-radius:14px;
+border-radius:16px;
 overflow:hidden;
-box-shadow:0 20px 60px rgba(0,0,0,0.6);
-transition:transform .6s ease;
+box-shadow:0 30px 70px rgba(0,0,0,0.7);
 }
 
 .lux-main-image img{
 width:100%;
-object-fit:cover;
-transition:transform .8s ease;
+transition:transform 1s ease;
 }
 
 .lux-main-image:hover img{
-transform:scale(1.08);
+transform:scale(1.1);
 }
+
+/* thumbnails */
 
 .lux-thumbs{
 display:flex;
@@ -61,69 +63,82 @@ flex-wrap:wrap;
 }
 
 .lux-thumbs img{
-width:80px;
+width:75px;
 border-radius:8px;
 cursor:pointer;
-opacity:.7;
-transition:.3s;
+opacity:.6;
+transition:.35s;
 border:2px solid transparent;
 }
 
 .lux-thumbs img:hover{
 opacity:1;
-border-color:#c9a46d;
-transform:scale(1.05);
+border-color:#d4af37;
+transform:scale(1.08);
+box-shadow:0 6px 20px rgba(212,175,55,.4);
 }
 
-/* ================= INFO ================= */
+/* ================= BRAND ================= */
 
 .lux-brand{
 font-size:12px;
-letter-spacing:4px;
-color:#b8a07b;
-margin-bottom:10px;
+letter-spacing:5px;
+color:#c9a46d;
 text-transform:uppercase;
+margin-bottom:8px;
 }
 
+/* ================= PRODUCT NAME ================= */
+
 #productName{
-font-size:36px;
+font-size:38px;
 font-weight:600;
 margin-bottom:10px;
 }
 
-.lux-short{
-color:#aaa;
-margin-bottom:25px;
-}
+/* ================= PRICE ================= */
 
 .lux-price{
-margin:20px 0;
 display:flex;
 align-items:center;
-gap:12px;
+gap:14px;
+margin:25px 0;
 }
 
 .price{
-font-size:32px;
-font-weight:600;
-color:#fff;
+font-size:36px;
+font-weight:700;
+color:#ffffff;
+animation:priceGlow 3s infinite alternate;
+}
+
+@keyframes priceGlow{
+from{text-shadow:0 0 5px #c9a46d;}
+to{text-shadow:0 0 20px #d4af37;}
 }
 
 .mrp{
 text-decoration:line-through;
-color:#777;
+color:#888;
 font-size:18px;
 }
 
-/* ================= DISCOUNT ================= */
+/* ================= DISCOUNT BADGE ================= */
 
 .lux-pay-banner{
-background:linear-gradient(135deg,#c9a46d,#8c6a3f);
+background:linear-gradient(135deg,#d4af37,#a17a3a);
+color:#000;
 padding:14px 18px;
 border-radius:8px;
-color:#000;
-font-weight:500;
-margin-bottom:20px;
+font-weight:600;
+margin-bottom:22px;
+animation:discountPulse 2.5s infinite;
+}
+
+@keyframes discountPulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.04);}
+100%{transform:scale(1);}
 }
 
 /* ================= OPTIONS ================= */
@@ -132,72 +147,93 @@ margin-bottom:20px;
 margin:30px 0;
 }
 
-.lux-option h4{
-margin-bottom:10px;
-font-weight:500;
-}
-
-/* COLOR */
-
 .color{
-width:34px;
-height:34px;
+width:36px;
+height:36px;
 border-radius:50%;
 display:inline-block;
 cursor:pointer;
-margin-right:10px;
+margin-right:12px;
 border:2px solid transparent;
-transition:.3s;
+transition:.35s;
 }
 
 .color.active{
-border-color:#c9a46d;
-transform:scale(1.1);
+border-color:#d4af37;
+transform:scale(1.15);
+box-shadow:0 0 10px rgba(212,175,55,.7);
 }
 
-/* SIZE */
+/* sizes */
 
 .size{
 padding:10px 16px;
-background:#1a1a1a;
+background:#1b1b1b;
 border:1px solid #333;
 color:#fff;
-margin-right:8px;
+margin-right:10px;
 cursor:pointer;
 transition:.3s;
 }
 
+.size:hover{
+border-color:#d4af37;
+}
+
 .size.active{
-border-color:#c9a46d;
 background:#000;
+border-color:#d4af37;
+box-shadow:0 0 10px rgba(212,175,55,.4);
 }
 
 /* ================= BUTTON ================= */
 
 .lux-btn{
 margin-top:30px;
-padding:16px 36px;
+padding:16px 38px;
 font-size:16px;
-background:#c9a46d;
+background:#d4af37;
 border:none;
 color:#000;
 cursor:pointer;
-transition:.4s;
 letter-spacing:1px;
+transition:.35s;
+position:relative;
+overflow:hidden;
 }
 
 .lux-btn:hover{
-background:#e2bf86;
+background:#f0c96d;
 transform:translateY(-3px);
-box-shadow:0 10px 30px rgba(0,0,0,.5);
+box-shadow:0 15px 40px rgba(0,0,0,.6);
+}
+
+/* ripple animation */
+
+.lux-btn::after{
+content:"";
+position:absolute;
+width:0;
+height:0;
+background:rgba(255,255,255,.3);
+border-radius:50%;
+transform:translate(-50%,-50%);
+top:50%;
+left:50%;
+transition:.6s;
+}
+
+.lux-btn:hover::after{
+width:300px;
+height:300px;
 }
 
 /* ================= TRUST ================= */
 
 .lux-trust{
-margin-top:25px;
+margin-top:28px;
 display:flex;
-gap:20px;
+gap:22px;
 color:#999;
 font-size:13px;
 }
@@ -206,7 +242,7 @@ font-size:13px;
 
 .lux-story{
 margin-top:140px;
-padding:120px 30px;
+padding:130px 30px;
 text-align:center;
 background:url("/images/sandalwood-forest.jpg") center/cover no-repeat;
 position:relative;
@@ -216,18 +252,19 @@ position:relative;
 content:"";
 position:absolute;
 inset:0;
-background:rgba(0,0,0,.6);
+background:rgba(0,0,0,.65);
 }
 
 .lux-story h2{
 position:relative;
-font-size:36px;
-margin-bottom:20px;
+font-size:38px;
+margin-bottom:18px;
+color:#fff;
 }
 
 .lux-story p{
 position:relative;
-max-width:700px;
+max-width:720px;
 margin:auto;
 color:#ddd;
 }
@@ -239,27 +276,25 @@ margin-top:120px;
 text-align:center;
 }
 
-.lux-materials h2{
-margin-bottom:40px;
-font-size:32px;
-}
-
 #materialsGrid{
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:30px;
+margin-top:40px;
 }
 
 #materialsGrid div{
 background:#111;
 padding:30px;
-border-radius:12px;
+border-radius:14px;
 transition:.4s;
+border:1px solid #1f1f1f;
 }
 
 #materialsGrid div:hover{
-transform:translateY(-8px);
-box-shadow:0 20px 50px rgba(0,0,0,.6);
+transform:translateY(-10px);
+box-shadow:0 25px 60px rgba(0,0,0,.7);
+border-color:#d4af37;
 }
 
 /* ================= DESCRIPTION ================= */
@@ -271,42 +306,13 @@ margin-inline:auto;
 text-align:center;
 }
 
-.lux-description h2{
-margin-bottom:20px;
-}
-
-/* ================= ANIMATIONS ================= */
-
-.lux-product section{
-opacity:0;
-transform:translateY(60px);
-animation:fadeUp 1s ease forwards;
-}
-
-.lux-product section:nth-child(2){
-animation-delay:.2s;
-}
-
-.lux-product section:nth-child(3){
-animation-delay:.4s;
-}
-
-@keyframes fadeUp{
-
-to{
-opacity:1;
-transform:translateY(0);
-}
-
-}
-
 /* ================= MOBILE ================= */
 
-@media (max-width:1024px){
+@media(max-width:1024px){
 
 .lux-grid{
 grid-template-columns:1fr;
-gap:40px;
+gap:50px;
 }
 
 .lux-gallery{
@@ -319,14 +325,14 @@ grid-template-columns:repeat(2,1fr);
 }
 
 #productName{
-font-size:28px;
+font-size:30px;
 }
 
 }
 
 /* ================= SMALL MOBILE ================= */
 
-@media (max-width:600px){
+@media(max-width:600px){
 
 .lux-product{
 padding:40px 18px;
@@ -346,6 +352,10 @@ width:100%;
 
 .lux-story{
 padding:80px 20px;
+}
+
+.price{
+font-size:28px;
 }
 
   }
