@@ -1,62 +1,351 @@
+/* ================= GLOBAL ================= */
+
+body{
+margin:0;
+font-family: "Helvetica Neue", Arial, sans-serif;
+background:#0b0b0b;
+color:#fff;
+line-height:1.6;
+}
+
+img{
+max-width:100%;
+display:block;
+}
+
+/* ================= PRODUCT LAYOUT ================= */
 
 .lux-product{
-max-width:1300px;
+max-width:1400px;
 margin:auto;
-padding:40px;
+padding:80px 30px;
 }
 
 .lux-grid{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:60px;
+gap:80px;
+align-items:start;
+}
+
+/* ================= GALLERY ================= */
+
+.lux-gallery{
+position:sticky;
+top:100px;
+}
+
+.lux-main-image{
+background:#111;
+border-radius:14px;
+overflow:hidden;
+box-shadow:0 20px 60px rgba(0,0,0,0.6);
+transition:transform .6s ease;
 }
 
 .lux-main-image img{
 width:100%;
-border-radius:10px;
+object-fit:cover;
+transition:transform .8s ease;
+}
+
+.lux-main-image:hover img{
+transform:scale(1.08);
 }
 
 .lux-thumbs{
 display:flex;
-gap:10px;
-margin-top:15px;
+gap:12px;
+margin-top:18px;
+flex-wrap:wrap;
 }
 
 .lux-thumbs img{
-width:70px;
+width:80px;
+border-radius:8px;
 cursor:pointer;
-border-radius:6px;
+opacity:.7;
+transition:.3s;
+border:2px solid transparent;
 }
 
+.lux-thumbs img:hover{
+opacity:1;
+border-color:#c9a46d;
+transform:scale(1.05);
+}
+
+/* ================= INFO ================= */
+
 .lux-brand{
-letter-spacing:2px;
 font-size:12px;
-color:#777;
+letter-spacing:4px;
+color:#b8a07b;
+margin-bottom:10px;
+text-transform:uppercase;
+}
+
+#productName{
+font-size:36px;
+font-weight:600;
+margin-bottom:10px;
+}
+
+.lux-short{
+color:#aaa;
+margin-bottom:25px;
+}
+
+.lux-price{
+margin:20px 0;
+display:flex;
+align-items:center;
+gap:12px;
 }
 
 .price{
-font-size:28px;
+font-size:32px;
 font-weight:600;
+color:#fff;
 }
 
 .mrp{
 text-decoration:line-through;
+color:#777;
+font-size:18px;
+}
+
+/* ================= DISCOUNT ================= */
+
+.lux-pay-banner{
+background:linear-gradient(135deg,#c9a46d,#8c6a3f);
+padding:14px 18px;
+border-radius:8px;
+color:#000;
+font-weight:500;
+margin-bottom:20px;
+}
+
+/* ================= OPTIONS ================= */
+
+.lux-option{
+margin:30px 0;
+}
+
+.lux-option h4{
+margin-bottom:10px;
+font-weight:500;
+}
+
+/* COLOR */
+
+.color{
+width:34px;
+height:34px;
+border-radius:50%;
+display:inline-block;
+cursor:pointer;
 margin-right:10px;
-color:#888;
+border:2px solid transparent;
+transition:.3s;
+}
+
+.color.active{
+border-color:#c9a46d;
+transform:scale(1.1);
+}
+
+/* SIZE */
+
+.size{
+padding:10px 16px;
+background:#1a1a1a;
+border:1px solid #333;
+color:#fff;
+margin-right:8px;
+cursor:pointer;
+transition:.3s;
+}
+
+.size.active{
+border-color:#c9a46d;
+background:#000;
+}
+
+/* ================= BUTTON ================= */
+
+.lux-btn{
+margin-top:30px;
+padding:16px 36px;
+font-size:16px;
+background:#c9a46d;
+border:none;
+color:#000;
+cursor:pointer;
+transition:.4s;
+letter-spacing:1px;
+}
+
+.lux-btn:hover{
+background:#e2bf86;
+transform:translateY(-3px);
+box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
+
+/* ================= TRUST ================= */
+
+.lux-trust{
+margin-top:25px;
+display:flex;
+gap:20px;
+color:#999;
+font-size:13px;
+}
+
+/* ================= STORY ================= */
+
+.lux-story{
+margin-top:140px;
+padding:120px 30px;
+text-align:center;
+background:url("/images/sandalwood-forest.jpg") center/cover no-repeat;
+position:relative;
+}
+
+.lux-story::before{
+content:"";
+position:absolute;
+inset:0;
+background:rgba(0,0,0,.6);
+}
+
+.lux-story h2{
+position:relative;
+font-size:36px;
+margin-bottom:20px;
+}
+
+.lux-story p{
+position:relative;
+max-width:700px;
+margin:auto;
+color:#ddd;
+}
+
+/* ================= MATERIALS ================= */
+
+.lux-materials{
+margin-top:120px;
+text-align:center;
+}
+
+.lux-materials h2{
+margin-bottom:40px;
+font-size:32px;
+}
+
+#materialsGrid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:30px;
+}
+
+#materialsGrid div{
+background:#111;
+padding:30px;
+border-radius:12px;
+transition:.4s;
+}
+
+#materialsGrid div:hover{
+transform:translateY(-8px);
+box-shadow:0 20px 50px rgba(0,0,0,.6);
+}
+
+/* ================= DESCRIPTION ================= */
+
+.lux-description{
+margin-top:120px;
+max-width:900px;
+margin-inline:auto;
+text-align:center;
+}
+
+.lux-description h2{
+margin-bottom:20px;
+}
+
+/* ================= ANIMATIONS ================= */
+
+.lux-product section{
+opacity:0;
+transform:translateY(60px);
+animation:fadeUp 1s ease forwards;
+}
+
+.lux-product section:nth-child(2){
+animation-delay:.2s;
+}
+
+.lux-product section:nth-child(3){
+animation-delay:.4s;
+}
+
+@keyframes fadeUp{
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width:1024px){
+
+.lux-grid{
+grid-template-columns:1fr;
+gap:40px;
+}
+
+.lux-gallery{
+position:relative;
+top:auto;
+}
+
+#materialsGrid{
+grid-template-columns:repeat(2,1fr);
+}
+
+#productName{
+font-size:28px;
+}
+
+}
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width:600px){
+
+.lux-product{
+padding:40px 18px;
+}
+
+.lux-thumbs img{
+width:60px;
+}
+
+#materialsGrid{
+grid-template-columns:1fr;
 }
 
 .lux-btn{
-margin-top:20px;
-padding:14px 30px;
-background:black;
-color:white;
-border:none;
-cursor:pointer;
+width:100%;
 }
 
 .lux-story{
-margin-top:100px;
-text-align:center;
-max-width:800px;
-margin-inline:auto;
+padding:80px 20px;
 }
+
+  }
