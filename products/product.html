@@ -51,14 +51,12 @@
     </ul>
   </nav>  
 </header>
-<!-- ================= PRODUCT PAGE ================= -->
-<!-- PRODUCT -->
-
+<!-- ================= PRODUCT PAGE ================= --><!-- PRODUCT -->
 <main class="lux-product">
 
 <div class="lux-grid">
 
-<!-- ================= LEFT GALLERY ================= -->
+<!-- ===== LEFT GALLERY ===== -->
 
 <section class="lux-gallery">
 
@@ -68,7 +66,9 @@
 
 </section>
 
-<!-- ================= RIGHT INFO ================= -->
+
+
+<!-- ===== RIGHT PRODUCT INFO ===== -->
 
 <section class="lux-info">
 
@@ -78,6 +78,42 @@
 
 <p id="productDesc" class="lux-short"></p>
 
+
+<!-- ===== PRODUCT META ===== -->
+
+<div class="product-meta">
+
+<div>
+<span>SKU</span>
+<strong id="productSku"></strong>
+</div>
+
+<div>
+<span>Status</span>
+<strong id="stockStatus"></strong>
+</div>
+
+<div>
+<span>Delivery</span>
+<strong id="deliveryTime"></strong>
+</div>
+
+<div>
+<span>Shipping</span>
+<strong id="shippingInfo"></strong>
+</div>
+
+<div>
+<span>Warranty</span>
+<strong id="productWarranty"></strong>
+</div>
+
+</div>
+
+
+
+<!-- ===== PRICE ===== -->
+
 <div class="lux-price">
 
 <span id="productMrp" class="mrp"></span>
@@ -86,6 +122,8 @@
 
 </div>
 
+
+
 <div class="lux-pay-banner">
 
 Pay via Gift Card / Crypto  
@@ -93,7 +131,9 @@ Pay via Gift Card / Crypto
 
 </div>
 
-<!-- COLOR -->
+
+
+<!-- ===== COLOR OPTIONS ===== -->
 
 <div id="colorsBlock" class="lux-option">
 
@@ -103,7 +143,9 @@ Pay via Gift Card / Crypto
 
 </div>
 
-<!-- SIZE -->
+
+
+<!-- ===== SIZE OPTIONS ===== -->
 
 <div id="sizesBlock" class="lux-option">
 
@@ -113,43 +155,72 @@ Pay via Gift Card / Crypto
 
 </div>
 
+
+
 <button id="addToCartBtn" class="lux-btn">
 
 Add to Cart
 
 </button>
 
+
+
+<!-- ===== TRUST ===== -->
+
 <div class="lux-trust">
 
 <span>100% Authentic</span>
-
 <span>Handcrafted</span>
-
 <span>Luxury Packaging</span>
 
 </div>
 
+
+
+<!-- ===== PAYMENT ICONS ===== -->
+
+<div class="payment-icons">
+
+<img src="../assets/payments/visa.svg">
+<img src="../assets/payments/mastercard.svg">
+<img src="../assets/payments/paypal.svg">
+<img src="../assets/payments/bitcoin.svg">
+
+</div>
+
+
+
+<!-- ===== SHARE ===== -->
+
+<div class="share-box">
+
+<span>Share</span>
+
+<a id="shareWhatsapp" target="_blank">WhatsApp</a>
+
+<a id="shareInstagram" target="_blank">Instagram</a>
+
+</div>
+
 </section>
 
 </div>
 
-<!-- ================= STORY ================= -->
 
-<section class="lux-story">
 
-<h2>Crafted from Rare Indian Red Sandalwood</h2>
+<!-- ===== PRODUCT SPECIFICATIONS ===== -->
 
-<p>
+<section class="lux-specs">
 
-Each watch is handcrafted from a single piece of rare Indian red sandalwood.
-Master artisans shape every component before gold and diamond detailing
-is applied by traditional jewellers.
+<h2>Product Specifications</h2>
 
-</p>
+<div id="specGrid" class="spec-grid"></div>
 
 </section>
 
-<!-- ================= MATERIALS ================= -->
+
+
+<!-- ===== MATERIALS ===== -->
 
 <section class="lux-materials">
 
@@ -159,7 +230,39 @@ is applied by traditional jewellers.
 
 </section>
 
-<!-- ================= DESCRIPTION ================= -->
+
+
+<!-- ===== CUSTOMIZATION ===== -->
+
+<section class="lux-custom">
+
+<h2>Customization Options</h2>
+
+<div id="customGrid"></div>
+
+</section>
+
+
+
+<!-- ===== STORY ===== -->
+
+<section class="lux-story">
+
+<h2>Crafted from Rare Indian Red Sandalwood</h2>
+
+<p id="storyText">
+
+Each watch is handcrafted from a single piece of rare Indian red sandalwood.
+Master artisans shape every component before gold and diamond detailing
+is applied by traditional jewellers.
+
+</p>
+
+</section>
+
+
+
+<!-- ===== DESCRIPTION ===== -->
 
 <section class="lux-description">
 
@@ -168,6 +271,34 @@ is applied by traditional jewellers.
 <p id="longDesc"></p>
 
 </section>
+
+
+
+<!-- ===== CUSTOMER REVIEWS ===== -->
+
+<section class="reviews-section">
+
+<h2>Customer Reviews</h2>
+
+<div id="ratingSummary"></div>
+
+<div id="reviewsList"></div>
+
+</section>
+
+
+
+<!-- ===== FAQ ===== -->
+
+<section class="faq-section">
+
+<h2>Frequently Asked Questions</h2>
+
+<div id="faqList"></div>
+
+</section>
+
+
 
 </main>
 
@@ -240,6 +371,7 @@ is applied by traditional jewellers.
 
 </body>
 </html>
+
 
 
 
