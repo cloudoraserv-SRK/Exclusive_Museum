@@ -175,9 +175,17 @@ customGrid.innerHTML="";
 (data||[]).forEach(c=>{
 
 customGrid.innerHTML+=`
-<div class="custom-item">
-✓ ${c.option_name}
-</div>
+
+<label class="custom-box">
+
+<input type="checkbox" class="custom-check" value="${c.custom_option}">
+
+<span>${c.custom_option}</span>
+
+<input class="engrave-input" placeholder="Enter engraving text">
+
+</label>
+
 `;
 
 });
@@ -435,3 +443,4 @@ red:"#8b0000"
 }[c?.toLowerCase()]||"#ccc";
 
           }
+
