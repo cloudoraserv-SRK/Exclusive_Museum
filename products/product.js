@@ -24,12 +24,16 @@ const specGrid=document.getElementById("specGrid");
 const materialsGrid=document.getElementById("materialsGrid");
 const customGrid=document.getElementById("customGrid");
 
+const reviewsList=document.getElementById("reviewsList");
+const faqList=document.getElementById("faqList");
+
 const addToCartBtn=document.getElementById("addToCartBtn");
 
 let productId=null;
 let variants=[];
 let currentVariant=null;
 let selectedSize=null;
+
 
 /* ================= PRODUCT ================= */
 
@@ -67,29 +71,48 @@ productBrand.textContent=data.brands?.name || "";
 
 longDesc.textContent=data.long_description;
 
+
 /* WATCH SPECS */
 
 specGrid.innerHTML=`
 
-<div><span>Case Size</span><strong>${data.case_size||"-"}</strong></div>
+<div class="spec-item">
+<span>Case Size</span>
+<strong>${data.case_size||"-"}</strong>
+</div>
 
-<div><span>Movement</span><strong>${data.movement||"-"}</strong></div>
+<div class="spec-item">
+<span>Movement</span>
+<strong>${data.movement||"-"}</strong>
+</div>
 
-<div><span>Glass</span><strong>${data.glass||"-"}</strong></div>
+<div class="spec-item">
+<span>Glass</span>
+<strong>${data.glass||"-"}</strong>
+</div>
 
-<div><span>Water Resistance</span><strong>${data.water_resistance||"-"}</strong></div>
+<div class="spec-item">
+<span>Water Resistance</span>
+<strong>${data.water_resistance||"-"}</strong>
+</div>
 
-<div><span>Crafting Time</span><strong>${data.crafting_time||"-"}</strong></div>
+<div class="spec-item">
+<span>Crafting Time</span>
+<strong>${data.crafting_time||"-"}</strong>
+</div>
 
 `;
 
 await loadMaterials();
 await loadCustomization();
 await loadVariants();
+await loadReviews();
+await loadFAQ();
 
 }
 
 loadProduct();
+
 
 /* ================= MATERIALS ================= */
 
@@ -102,25 +125,41 @@ const {data}=await supabase
 .maybeSingle();
 
 if(!data){
-materialsGrid.innerHTML="No materials info";
+materialsGrid.innerHTML="<p>No materials info</p>";
 return;
 }
 
 materialsGrid.innerHTML=`
 
-<div><span>Gold Type</span><strong>${data.gold_type||"-"}</strong></div>
+<div class="spec-item">
+<span>Gold Type</span>
+<strong>${data.gold_type}</strong>
+</div>
 
-<div><span>Gold Weight</span><strong>${data.gold_weight||"-"} g</strong></div>
+<div class="spec-item">
+<span>Gold Weight</span>
+<strong>${data.gold_weight} g</strong>
+</div>
 
-<div><span>Diamond Carat</span><strong>${data.diamond_carat||"-"}</strong></div>
+<div class="spec-item">
+<span>Diamond Carat</span>
+<strong>${data.diamond_carat}</strong>
+</div>
 
-<div><span>Diamond Count</span><strong>${data.diamond_count||"-"}</strong></div>
+<div class="spec-item">
+<span>Diamond Count</span>
+<strong>${data.diamond_count}</strong>
+</div>
 
-<div><span>Wood Type</span><strong>${data.wood_type||"-"}</strong></div>
+<div class="spec-item">
+<span>Wood Type</span>
+<strong>${data.wood_type}</strong>
+</div>
 
 `;
 
 }
+
 
 /* ================= CUSTOMIZATION ================= */
 
@@ -135,11 +174,16 @@ customGrid.innerHTML="";
 
 (data||[]).forEach(c=>{
 
-customGrid.innerHTML+=`<span class="custom-item">${c.option_name}</span>`;
+customGrid.innerHTML+=`
+<div class="custom-item">
+✓ ${c.option_name}
+</div>
+`;
 
 });
 
 }
+
 
 /* ================= VARIANTS ================= */
 
@@ -163,6 +207,7 @@ renderColors();
 if(variants.length) setVariant(variants[0]);
 
 }
+
 
 /* ================= COLORS ================= */
 
@@ -197,6 +242,7 @@ colorsEl.appendChild(btn);
 
 }
 
+
 /* ================= SET VARIANT ================= */
 
 function setVariant(v){
@@ -210,6 +256,7 @@ renderImages(v.image_gallery||[]);
 renderSizes(v.variant_stock||[]);
 
 }
+
 
 /* ================= IMAGES ================= */
 
@@ -242,6 +289,7 @@ thumbs.appendChild(img);
 });
 
 }
+
 
 /* ================= SIZES ================= */
 
@@ -282,6 +330,69 @@ stockStatus.textContent=totalStock>0 ? "In Stock" : "Out of Stock";
 
 }
 
+
+/* ================= REVIEWS ================= */
+
+async function loadReviews(){
+
+const {data}=await supabase
+.from("product_reviews")
+.select("*")
+.eq("product_id",productId);
+
+reviewsList.innerHTML="";
+
+(data||[]).forEach(r=>{
+
+reviewsList.innerHTML+=`
+
+<div class="review">
+
+<strong>${r.name}</strong>
+
+<div>⭐ ${r.rating}/5</div>
+
+<p>${r.review}</p>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+/* ================= FAQ ================= */
+
+async function loadFAQ(){
+
+const {data}=await supabase
+.from("product_faq")
+.select("*")
+.eq("product_id",productId);
+
+faqList.innerHTML="";
+
+(data||[]).forEach(f=>{
+
+faqList.innerHTML+=`
+
+<div class="faq-item">
+
+<h4>${f.question}</h4>
+
+<p>${f.answer}</p>
+
+</div>
+
+`;
+
+});
+
+}
+
+
 /* ================= CART ================= */
 
 addToCartBtn.onclick=()=>{
@@ -308,6 +419,7 @@ alert("Added to cart");
 
 };
 
+
 /* ================= COLOR MAP ================= */
 
 function mapColor(c){
@@ -322,6 +434,4 @@ red:"#8b0000"
 
 }[c?.toLowerCase()]||"#ccc";
 
-}
-
-
+          }
