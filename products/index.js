@@ -31,8 +31,8 @@ async function loadProducts() {
       short_description,
       active,
       brands:brand_id ( id, name, slug ),
-      styles:style_id ( id, name ),
-      categories:category_id ( id, name ),
+      styles:style_id ( id, name, slug ),
+      categories:category_id ( id, name, slug ),
       variants (
         id,
         image_gallery,
@@ -44,19 +44,9 @@ async function loadProducts() {
     `)
     .eq("active", true);
 
-  /* FILTERS */
-
-  if (brandSlug) {
-    query = query.eq("brands.slug", brandSlug);
-  }
-
-  if (categorySlug) {
-    query = query.eq("categories.slug", categorySlug);
-  }
-
-  if (styleSlug) {
-    query = query.eq("styles.slug", styleSlug);
-  }
+  if (brandSlug) query = query.eq("brands.slug", brandSlug);
+  if (categorySlug) query = query.eq("categories.slug", categorySlug);
+  if (styleSlug) query = query.eq("styles.slug", styleSlug);
 
   const { data, error } = await query.order("created_at", { ascending: false });
 
@@ -69,7 +59,7 @@ async function loadProducts() {
   renderProducts(data || []);
 }
 
-/* ================= RENDER ================= */
+/* ================= RENDER PRODUCTS ================= */
 
 function renderProducts(products) {
 
@@ -83,19 +73,23 @@ function renderProducts(products) {
   products.forEach(p => {
 
     /* IMAGE */
+
     let imageUrl = "../assets/images/placeholder.png";
 
     const variant = p.variants?.[0];
 
     if (variant?.image_gallery?.length) {
+
       const { data } = supabase.storage
-        .from("products")
+        .from("product-images")   // ✅ correct bucket
         .getPublicUrl(variant.image_gallery[0]);
 
       imageUrl = data.publicUrl;
+
     }
 
     /* SIZES */
+
     let sizes = [];
 
     p.variants?.forEach(v => {
@@ -107,38 +101,59 @@ function renderProducts(products) {
     sizes = [...new Set(sizes)];
 
     grid.insertAdjacentHTML("beforeend", `
+
       <div class="product-card">
 
         <a href="product.html?slug=${p.slug}" class="product-link">
+
           <img src="${imageUrl}" alt="${p.name}">
 
           <div class="product-info">
+
             <h4 class="brand">${p.brands?.name || ""}</h4>
+
             <h3>${p.name}</h3>
 
             <div class="price-row">
-              ${p.mrp ? `<span class="mrp">₹${p.mrp}</span>` : ""}
-              <span class="price">₹${p.price}</span>
+
+              ${p.mrp ? `<span class="mrp">$${p.mrp}</span>` : ""}
+
+              <span class="price">$${p.price}</span>
+
             </div>
 
             <p class="desc">${p.short_description || ""}</p>
+
           </div>
+
         </a>
 
         <select class="size-select">
+
           <option value="">Select Size</option>
+
           ${sizes.map(s => `<option value="${s}">${s}</option>`).join("")}
+
         </select>
 
         <button class="add-btn"
+
           data-id="${p.id}"
+
           data-name="${p.name}"
-          data-price="${p.price}">
+
+          data-price="${p.price}"
+
+        >
+
           Add to Cart
+
         </button>
 
       </div>
+
     `);
+
   });
 
   initCartButtons();
@@ -153,6 +168,7 @@ function initCartButtons() {
     btn.onclick = () => {
 
       const card = btn.closest(".product-card");
+
       const size = card.querySelector(".size-select").value;
 
       if (!size) {
@@ -162,26 +178,48 @@ function initCartButtons() {
 
       const id = btn.dataset.id;
       const name = btn.dataset.name;
-      const price = +btn.dataset.price;
+      const price = Number(btn.dataset.price);
 
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
       const existing = cart.find(i => i.id === id && i.size === size);
 
       if (existing) existing.qty++;
-      else cart.push({ id, name, price, size, qty: 1 });
+
+      else cart.push({
+        product_id:id,
+        name,
+        price,
+        size,
+        qty:1
+      });
 
       localStorage.setItem("cart", JSON.stringify(cart));
+
       updateCartCount();
+
       alert("Added to cart");
+
     };
 
   });
 
 }
 
+/* ================= CART COUNT ================= */
+
 function updateCartCount() {
+
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
   const el = document.getElementById("cartCount");
-  if (el) el.textContent = cart.reduce((a, b) => a + b.qty, 0);
+
+  if (el) {
+
+    const count = cart.reduce((a,b)=>a + b.qty,0);
+
+    el.textContent = count;
+
+  }
+
 }
