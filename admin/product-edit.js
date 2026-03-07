@@ -459,7 +459,7 @@ await supabase
 .from("product_customization")
 .insert({
 product_id:id,
-option_name:opt
+custom_option:opt
 });
 
 }
@@ -532,3 +532,4 @@ await loadCategories();
 await loadProduct();
 
 });
+
