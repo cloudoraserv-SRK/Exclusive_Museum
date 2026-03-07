@@ -50,29 +50,6 @@ slug.value=name.value
 
 });
 
-/* image optimizer */
-
-async function optimizeImage(file){
-
-const img=await createImageBitmap(file);
-
-const canvas=document.createElement("canvas");
-
-const max=1600;
-
-const scale=Math.min(max/img.width,max/img.height,1);
-
-canvas.width=img.width*scale;
-canvas.height=img.height*scale;
-
-const ctx=canvas.getContext("2d");
-
-ctx.drawImage(img,0,0,canvas.width,canvas.height);
-
-return new Promise(res=>canvas.toBlob(blob=>res(blob),"image/webp",0.85));
-
-}
-
 /* load product */
 
 async function loadProduct(){
@@ -93,8 +70,32 @@ shortDesc.value=data.short_description||"";
 longDesc.value=data.long_description||"";
 active.checked=!!data.active;
 
+brand.value=data.brand_id || "";
+category.value=data.category_id || "";
+
+await loadMaterials();
 await loadVariants();
 await loadSpecs();
+
+}
+
+/* load materials */
+
+async function loadMaterials(){
+
+const {data}=await supabase
+.from("product_materials")
+.select("*")
+.eq("product_id",id)
+.single();
+
+if(!data) return;
+
+goldType.value=data.gold_type||"";
+goldWeight.value=data.gold_weight||"";
+diamondCarat.value=data.diamond_carat||"";
+diamondCount.value=data.diamond_count||"";
+woodType.value=data.wood_type||"";
 
 }
 
@@ -119,8 +120,8 @@ colorSelect.innerHTML=`<option>No variants</option>`;
 return;
 }
 
-colorSelect.innerHTML=variants.map((v,i)=>
-`<option value="${i}">${v.color||"Default"}</option>`
+colorSelect.innerHTML=variants.map(v=>
+`<option value="${v.id}">${v.color||"Default"}</option>`
 ).join("");
 
 selectVariant();
@@ -129,7 +130,9 @@ selectVariant();
 
 function selectVariant(){
 
-currentVariant=variants[colorSelect.value];
+const vid=colorSelect.value;
+
+currentVariant=variants.find(v=>v.id==vid);
 
 renderImages();
 renderSizes();
@@ -150,16 +153,12 @@ currentVariant.image_gallery.forEach((path,i)=>{
 
 const {data}=supabase.storage
 .from("product-images")
-.getPublicUrl(path,{
-transform:{width:300,quality:80}
-});
+.getPublicUrl(path);
 
 const url=data.publicUrl;
 
-const hero=i===0 ? "hero-img" : "";
-
 imageGallery.innerHTML+=`
-<div class="img-box ${hero}" draggable="true" data-i="${i}">
+<div class="img-box" data-i="${i}">
 <img src="${url}">
 <button class="remove-img" data-i="${i}">✕</button>
 </div>
@@ -167,96 +166,8 @@ imageGallery.innerHTML+=`
 
 });
 
-initDrag();
-
 document.querySelectorAll(".remove-img").forEach(btn=>{
 btn.onclick=()=>removeImage(btn.dataset.i);
-});
-
-}
-
-/* upload images */
-
-async function uploadImages(files){
-
-if(!currentVariant) return alert("Select variant");
-
-let gallery=[...(currentVariant.image_gallery||[])];
-
-for(const file of files){
-
-const optimized=await optimizeImage(file);
-
-const clean=file.name
-.replace(/\.[^/.]+$/,"")
-.replace(/[^a-z0-9]/gi,"-")
-.toLowerCase();
-
-const path=`${slug.value}/${Date.now()}-${clean}.webp`;
-
-const {error}=await supabase.storage
-.from("product-images")
-.upload(path,optimized,{
-contentType:"image/webp",
-upsert:true
-});
-
-if(error){
-console.error(error);
-continue;
-}
-
-gallery.push(path);
-
-}
-
-await updateGallery(gallery);
-
-}
-
-/* update gallery */
-
-async function updateGallery(gallery){
-
-await supabase
-.from("variants")
-.update({image_gallery:gallery})
-.eq("id",currentVariant.id);
-
-currentVariant.image_gallery=gallery;
-
-renderImages();
-
-}
-
-/* drag reorder */
-
-function initDrag(){
-
-let dragIndex;
-
-document.querySelectorAll(".img-box").forEach(box=>{
-
-box.ondragstart=e=>{
-dragIndex=box.dataset.i;
-};
-
-box.ondragover=e=>e.preventDefault();
-
-box.ondrop=e=>{
-
-const dropIndex=box.dataset.i;
-
-const gallery=[...currentVariant.image_gallery];
-
-const dragged=gallery.splice(dragIndex,1)[0];
-
-gallery.splice(dropIndex,0,dragged);
-
-updateGallery(gallery);
-
-};
-
 });
 
 }
@@ -277,28 +188,20 @@ await updateGallery(gallery);
 
 }
 
-/* drag drop */
+/* update gallery */
 
-dropZone.ondragover=e=>{
-e.preventDefault();
-dropZone.classList.add("drag");
-};
+async function updateGallery(gallery){
 
-dropZone.ondragleave=()=>{
-dropZone.classList.remove("drag");
-};
+await supabase
+.from("variants")
+.update({image_gallery:gallery})
+.eq("id",currentVariant.id);
 
-dropZone.ondrop=e=>{
-e.preventDefault();
-dropZone.classList.remove("drag");
+currentVariant.image_gallery=gallery;
 
-uploadImages([...e.dataTransfer.files]);
+renderImages();
 
-};
-
-imageInput.onchange=e=>{
-uploadImages([...e.target.files]);
-};
+}
 
 /* sizes */
 
@@ -327,8 +230,8 @@ specList.innerHTML="";
 
 specList.innerHTML+=`
 <div class="spec-row">
-<input value="${s.spec_name}">
-<input value="${s.spec_value}">
+<input class="spec-name" value="${s.spec_name}">
+<input class="spec-value" value="${s.spec_value}">
 </div>
 `;
 
@@ -340,8 +243,8 @@ document.getElementById("addSpec").onclick=()=>{
 
 specList.innerHTML+=`
 <div class="spec-row">
-<input placeholder="Spec name">
-<input placeholder="Value">
+<input class="spec-name" placeholder="Spec name">
+<input class="spec-value" placeholder="Value">
 </div>
 `;
 
@@ -360,6 +263,8 @@ mrp:mrp.value||null,
 price:price.value||null,
 short_description:shortDesc.value,
 long_description:longDesc.value,
+brand_id:brand.value||null,
+category_id:category.value||null,
 active:active.checked
 })
 .eq("id",id);
@@ -377,23 +282,28 @@ diamond_count:diamondCount.value,
 wood_type:woodType.value
 });
 
-/* customization */
-
-const options=[...document.querySelectorAll(".customOpt:checked")]
-.map(o=>o.value);
+/* specs save */
 
 await supabase
-.from("product_customization")
+.from("product_specs")
 .delete()
 .eq("product_id",id);
 
-for(const opt of options){
+const specs=[...document.querySelectorAll(".spec-row")];
+
+for(const row of specs){
+
+const name=row.querySelector(".spec-name").value;
+const value=row.querySelector(".spec-value").value;
+
+if(!name || !value) continue;
 
 await supabase
-.from("product_customization")
+.from("product_specs")
 .insert({
 product_id:id,
-option_name:opt
+spec_name:name,
+spec_value:value
 });
 
 }
