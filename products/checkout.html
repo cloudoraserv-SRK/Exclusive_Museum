@@ -178,100 +178,178 @@ Place Order
 ========================= -->
 
 <script>
-const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+import { supabase } from "../admin/supabaseClient.js";
 
-const orderSummary = document.getElementById("orderSummary");
-const orderTotal = document.getElementById("orderTotal");
-const payBtn = document.getElementById("payNowBtn");
+const cart=JSON.parse(localStorage.getItem("cart")||"[]");
 
-let total = 0;
+const orderSummary=document.getElementById("orderSummary");
+const orderTotal=document.getElementById("orderTotal");
 
-cart.forEach(item => {
-  const row = document.createElement("div");
-  row.className = "order-item";
-  row.innerHTML = `
-    <span>${item.name} × ${item.qty}</span>
-    <span>₹${item.price * item.qty}</span>
-  `;
-  orderSummary.appendChild(row);
-  total += item.price * item.qty;
-});
+let total=0;
 
-orderTotal.innerText = `₹${total}`;
+/* CART RENDER */
 
-payBtn.addEventListener("click", async () => {
+cart.forEach(item=>{
 
-  const name = customerName.value.trim();
-  const email = customerEmail.value.trim();
-  const phone = customerPhone.value.trim();
-  const address = customerAddress.value.trim();
-  const city = customerCity.value.trim();
-  const pincode = customerPincode.value.trim();
+const div=document.createElement("div");
 
-  if (!name || !email || !phone || !address || !city || !pincode) {
-    alert("Please fill all details");
-    return;
-  }
+div.className="order-row";
 
-  if (!cart.length) {
-    alert("Cart empty");
-    return;
-  }
+div.innerHTML=`
+<span>${item.name} × ${item.qty}</span>
+<span>$${item.price*item.qty}</span>
+`;
 
-  payBtn.disabled = true;
-  payBtn.innerText = "Processing...";
+orderSummary.appendChild(div);
 
-  try {
-
-   const res = await fetch(
-  "https://vxdulkarabqzdwfjckis.supabase.co/functions/v1/create-payment",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHVsa2FyYWJxemR3Zmpja2lzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDc5ODQsImV4cCI6MjA4MzgyMzk4NH0.LlWNzi9-ys6UdEqdlwe82FZ-lQTGAGKCml5cfCEt9j0",
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHVsa2FyYWJxemR3Zmpja2lzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDc5ODQsImV4cCI6MjA4MzgyMzk4NH0.LlWNzi9-ys6UdEqdlwe82FZ-lQTGAGKCml5cfCEt9j0"
-    },
-    body: JSON.stringify({
-      amount: total,
-      customer: {
-        id: "cust_" + Date.now(),
-        name,
-        email,
-        phone
-      }
-    })
-  }
-);
-
-    const data = await res.json();
-
-    if (!data.payment_session_id) {
-      alert("Payment creation failed");
-      payBtn.disabled = false;
-      payBtn.innerText = "Pay Securely";
-      return;
-    }
-
-    const cashfree = Cashfree({
-      mode: "production"   // sandbox use karo agar test mode hai
-    });
-
-    cashfree.checkout({
-      paymentSessionId: data.payment_session_id,
-      redirectTarget: "_self"
-    });
-
-  } catch (err) {
-    alert("Payment failed");
-    payBtn.disabled = false;
-    payBtn.innerText = "Pay Securely";
-  }
+total+=item.price*item.qty;
 
 });
+
+orderTotal.textContent="$"+total;
+
+
+/* PAYMENT INSTRUCTIONS */
+
+const paymentSelect=document.getElementById("paymentMethod");
+const paymentBox=document.getElementById("paymentInstructions");
+
+paymentSelect.onchange=()=>{
+
+const method=paymentSelect.value;
+
+if(method==="paypal"){
+
+paymentBox.innerHTML=`
+Send payment to PayPal:<br>
+<b>sales@exclusivemuseum.cloud</b>
+`;
+
+}
+
+if(method==="wire"){
+
+paymentBox.innerHTML=`
+Bank Transfer Details:<br>
+Account Name: Exclusive Museum<br>
+SWIFT: EXCLBANK
+`;
+
+}
+
+if(method==="crypto"){
+
+paymentBox.innerHTML=`
+Bitcoin Address:<br>
+<b>bc1qexamplewallet</b>
+`;
+
+}
+
+if(method==="card"){
+
+paymentBox.innerHTML=`
+For card payments contact us:<br>
+WhatsApp or Call
+`;
+
+}
+
+if(method==="gift"){
+
+paymentBox.innerHTML=`
+<input id="giftCode" placeholder="Enter Gift Card Code">
+`;
+
+}
+
+};
+
+
+/* ORDER CREATE */
+
+document.getElementById("placeOrderBtn").onclick=async()=>{
+
+const name=document.getElementById("name").value;
+const email=document.getElementById("email").value;
+const phone=document.getElementById("phone").value;
+
+const address=document.getElementById("address").value;
+const city=document.getElementById("city").value;
+const zip=document.getElementById("zip").value;
+
+const payment=paymentSelect.value;
+
+if(!name||!email||!phone||!address){
+
+alert("Fill all fields");
+return;
+
+}
+
+const orderCode="EM-"+Date.now();
+
+/* INSERT ORDER */
+
+const {data}=await supabase
+.from("orders")
+.insert({
+
+order_id:orderCode,
+
+customer_name:name,
+email:email,
+phone:phone,
+
+address:address,
+city:city,
+zip:zip,
+
+payment_method:payment,
+payment_status:"pending",
+
+order_status:"payment_in_progress",
+
+total_amount:total
+
+})
+.select()
+.single();
+
+/* INSERT ITEMS */
+
+for(const item of cart){
+
+await supabase
+.from("order_items")
+.insert({
+
+order_id:data.id,
+
+product_id:item.product_id,
+variant_id:item.variant_id,
+
+product_name:item.name,
+
+size:item.size,
+price:item.price,
+qty:item.qty
+
+});
+
+}
+
+localStorage.removeItem("cart");
+
+alert("Order placed! Your Order ID: "+orderCode);
+
+location.href="../products/track.html?id="+orderCode;
+
+};
 </script>
 </body>
 </html>
+
 
 
 
