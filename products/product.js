@@ -99,9 +99,12 @@ const {data}=await supabase
 .from("product_materials")
 .select("*")
 .eq("product_id",productId)
-.maybesingle();
+.maybeSingle();
 
-if(!data) return;
+if(!data){
+materialsGrid.innerHTML="No materials info";
+return;
+}
 
 materialsGrid.innerHTML=`
 
@@ -320,4 +323,5 @@ red:"#8b0000"
 }[c?.toLowerCase()]||"#ccc";
 
 }
+
 
