@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 const id = new URLSearchParams(location.search).get("id");
 if(!id) location.href="products.html";
 
-/* elements */
+/* ELEMENTS */
 
 const name=document.getElementById("name");
 const slug=document.getElementById("slug");
@@ -18,14 +18,11 @@ const active=document.getElementById("active");
 const brand=document.getElementById("brand");
 const category=document.getElementById("category");
 
-const colorSelect=document.getElementById("colorSelect");
-const sizeList=document.getElementById("sizeList");
-
-const imageInput=document.getElementById("images");
-const dropZone=document.getElementById("dropZone");
-const imageGallery=document.getElementById("imageGallery");
-
-const specList=document.getElementById("specList");
+const caseSize=document.getElementById("caseSize");
+const movement=document.getElementById("movement");
+const glass=document.getElementById("glass");
+const waterResistance=document.getElementById("waterResistance");
+const craftingTime=document.getElementById("craftingTime");
 
 const goldType=document.getElementById("goldType");
 const goldWeight=document.getElementById("goldWeight");
@@ -33,24 +30,48 @@ const diamondCarat=document.getElementById("diamondCarat");
 const diamondCount=document.getElementById("diamondCount");
 const woodType=document.getElementById("woodType");
 
+const colorSelect=document.getElementById("colorSelect");
+const sizeList=document.getElementById("sizeList");
+
+const imageInput=document.getElementById("images");
+const imageGallery=document.getElementById("imageGallery");
+
+const specList=document.getElementById("specList");
+
 const saveBtn=document.getElementById("saveProduct");
 
 let variants=[];
 let currentVariant=null;
 
-/* slug auto */
+/* AUTO SLUG */
 
 name.addEventListener("input",()=>{
-
-slug.value=name.value
-.toLowerCase()
-.trim()
-.replace(/[^\w\s-]/g,"")
-.replace(/\s+/g,"-");
-
+slug.value=name.value.toLowerCase().replace(/\s+/g,"-");
 });
 
-/* load product */
+/* LOAD DROPDOWNS */
+
+async function loadBrands(){
+
+const {data}=await supabase.from("brands").select("id,name");
+
+brand.innerHTML=data.map(b=>`
+<option value="${b.id}">${b.name}</option>
+`).join("");
+
+}
+
+async function loadCategories(){
+
+const {data}=await supabase.from("categories").select("id,name");
+
+category.innerHTML=data.map(c=>`
+<option value="${c.id}">${c.name}</option>
+`).join("");
+
+}
+
+/* LOAD PRODUCT */
 
 async function loadProduct(){
 
@@ -68,10 +89,17 @@ mrp.value=data.mrp||"";
 price.value=data.price||"";
 shortDesc.value=data.short_description||"";
 longDesc.value=data.long_description||"";
-active.checked=!!data.active;
 
-brand.value=data.brand_id || "";
-category.value=data.category_id || "";
+caseSize.value=data.case_size||"";
+movement.value=data.movement||"";
+glass.value=data.glass||"";
+waterResistance.value=data.water_resistance||"";
+craftingTime.value=data.crafting_time||"";
+
+active.checked=data.active;
+
+brand.value=data.brand_id;
+category.value=data.category_id;
 
 await loadMaterials();
 await loadVariants();
@@ -79,7 +107,7 @@ await loadSpecs();
 
 }
 
-/* load materials */
+/* MATERIALS */
 
 async function loadMaterials(){
 
@@ -99,7 +127,7 @@ woodType.value=data.wood_type||"";
 
 }
 
-/* variants */
+/* VARIANTS */
 
 async function loadVariants(){
 
@@ -115,13 +143,8 @@ variant_stock(size,stock)
 
 variants=data||[];
 
-if(!variants.length){
-colorSelect.innerHTML=`<option>No variants</option>`;
-return;
-}
-
 colorSelect.innerHTML=variants.map(v=>
-`<option value="${v.id}">${v.color||"Default"}</option>`
+`<option value="${v.id}">${v.color}</option>`
 ).join("");
 
 selectVariant();
@@ -130,9 +153,7 @@ selectVariant();
 
 function selectVariant(){
 
-const vid=colorSelect.value;
-
-currentVariant=variants.find(v=>v.id==vid);
+currentVariant=variants.find(v=>v.id==colorSelect.value);
 
 renderImages();
 renderSizes();
@@ -141,26 +162,22 @@ renderSizes();
 
 colorSelect.onchange=selectVariant;
 
-/* render images */
+/* IMAGES */
 
 function renderImages(){
 
 imageGallery.innerHTML="";
 
-if(!currentVariant?.image_gallery) return;
-
-currentVariant.image_gallery.forEach((path,i)=>{
+(currentVariant?.image_gallery||[]).forEach((path,i)=>{
 
 const {data}=supabase.storage
 .from("product-images")
 .getPublicUrl(path);
 
-const url=data.publicUrl;
-
 imageGallery.innerHTML+=`
-<div class="img-box" data-i="${i}">
-<img src="${url}">
-<button class="remove-img" data-i="${i}">✕</button>
+<div class="img-box">
+<img src="${data.publicUrl}">
+<button data-i="${i}" class="remove-img">✕</button>
 </div>
 `;
 
@@ -172,8 +189,6 @@ btn.onclick=()=>removeImage(btn.dataset.i);
 
 }
 
-/* delete image */
-
 async function removeImage(i){
 
 const path=currentVariant.image_gallery[i];
@@ -182,28 +197,18 @@ await supabase.storage
 .from("product-images")
 .remove([path]);
 
-const gallery=currentVariant.image_gallery.filter((_,idx)=>idx!=i);
-
-await updateGallery(gallery);
-
-}
-
-/* update gallery */
-
-async function updateGallery(gallery){
+currentVariant.image_gallery.splice(i,1);
 
 await supabase
 .from("variants")
-.update({image_gallery:gallery})
+.update({image_gallery:currentVariant.image_gallery})
 .eq("id",currentVariant.id);
-
-currentVariant.image_gallery=gallery;
 
 renderImages();
 
 }
 
-/* sizes */
+/* SIZES */
 
 function renderSizes(){
 
@@ -215,7 +220,7 @@ sizeList.innerHTML+=`<div>Size ${s.size} | Stock ${s.stock}</div>`;
 
 }
 
-/* specs */
+/* SPECS */
 
 async function loadSpecs(){
 
@@ -227,30 +232,24 @@ const {data}=await supabase
 specList.innerHTML="";
 
 (data||[]).forEach(s=>{
-
 specList.innerHTML+=`
 <div class="spec-row">
 <input class="spec-name" value="${s.spec_name}">
 <input class="spec-value" value="${s.spec_value}">
-</div>
-`;
-
+</div>`;
 });
 
 }
 
 document.getElementById("addSpec").onclick=()=>{
-
 specList.innerHTML+=`
 <div class="spec-row">
 <input class="spec-name" placeholder="Spec name">
 <input class="spec-value" placeholder="Value">
-</div>
-`;
-
+</div>`;
 };
 
-/* save product */
+/* SAVE */
 
 saveBtn.onclick=async()=>{
 
@@ -263,13 +262,18 @@ mrp:mrp.value||null,
 price:price.value||null,
 short_description:shortDesc.value,
 long_description:longDesc.value,
-brand_id:brand.value||null,
-category_id:category.value||null,
+brand_id:brand.value,
+category_id:category.value,
+case_size:caseSize.value,
+movement:movement.value,
+glass:glass.value,
+water_resistance:waterResistance.value,
+crafting_time:craftingTime.value,
 active:active.checked
 })
 .eq("id",id);
 
-/* materials */
+/* MATERIALS */
 
 await supabase
 .from("product_materials")
@@ -282,36 +286,38 @@ diamond_count:diamondCount.value,
 wood_type:woodType.value
 });
 
-/* specs save */
+/* SPECS */
 
 await supabase
 .from("product_specs")
 .delete()
 .eq("product_id",id);
 
-const specs=[...document.querySelectorAll(".spec-row")];
+document.querySelectorAll(".spec-row").forEach(async row=>{
 
-for(const row of specs){
+const n=row.querySelector(".spec-name").value;
+const v=row.querySelector(".spec-value").value;
 
-const name=row.querySelector(".spec-name").value;
-const value=row.querySelector(".spec-value").value;
-
-if(!name || !value) continue;
+if(!n||!v) return;
 
 await supabase
 .from("product_specs")
 .insert({
 product_id:id,
-spec_name:name,
-spec_value:value
+spec_name:n,
+spec_value:v
 });
 
-}
+});
 
 alert("Product updated");
 
 };
 
-loadProduct();
+/* INIT */
+
+await loadBrands();
+await loadCategories();
+await loadProduct();
 
 });
