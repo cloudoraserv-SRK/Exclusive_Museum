@@ -418,3 +418,46 @@ width:20px;
 height:20px;
 cursor:pointer;
 }
+
+.admin-orders{
+
+padding:40px;
+
+}
+
+.orders-table{
+
+width:100%;
+border-collapse:collapse;
+
+}
+
+.orders-table th,
+.orders-table td{
+
+padding:12px;
+border-bottom:1px solid #ddd;
+
+}
+
+.orders-table th{
+
+background:#111;
+color:white;
+
+}
+
+.status-select{
+
+padding:6px;
+
+}
+
+.update-btn{
+
+background:#d4af37;
+border:none;
+padding:6px 12px;
+cursor:pointer;
+
+}
