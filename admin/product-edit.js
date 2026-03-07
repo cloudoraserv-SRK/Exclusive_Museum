@@ -33,15 +33,17 @@ const woodType=document.getElementById("woodType");
 const colorSelect=document.getElementById("colorSelect");
 const sizeList=document.getElementById("sizeList");
 
-const imageInput=document.getElementById("images");
 const imageGallery=document.getElementById("imageGallery");
 
 const specList=document.getElementById("specList");
+const reviewList=document.getElementById("reviewList");
+const faqAdmin=document.getElementById("faqAdmin");
 
 const saveBtn=document.getElementById("saveProduct");
 
 let variants=[];
 let currentVariant=null;
+
 
 /* AUTO SLUG */
 
@@ -49,15 +51,16 @@ name.addEventListener("input",()=>{
 slug.value=name.value.toLowerCase().replace(/\s+/g,"-");
 });
 
+
 /* LOAD DROPDOWNS */
 
 async function loadBrands(){
 
 const {data}=await supabase.from("brands").select("id,name");
 
-brand.innerHTML=data.map(b=>`
-<option value="${b.id}">${b.name}</option>
-`).join("");
+brand.innerHTML=data.map(b=>
+`<option value="${b.id}">${b.name}</option>`
+).join("");
 
 }
 
@@ -65,11 +68,12 @@ async function loadCategories(){
 
 const {data}=await supabase.from("categories").select("id,name");
 
-category.innerHTML=data.map(c=>`
-<option value="${c.id}">${c.name}</option>
-`).join("");
+category.innerHTML=data.map(c=>
+`<option value="${c.id}">${c.name}</option>`
+).join("");
 
 }
+
 
 /* LOAD PRODUCT */
 
@@ -104,14 +108,17 @@ category.value=data.category_id;
 await loadMaterials();
 await loadVariants();
 await loadSpecs();
+await loadReviews();
+await loadFAQ();
 
 }
+
 
 /* MATERIALS */
 
 async function loadMaterials(){
 
-let {data,error}=await supabase
+let {data}=await supabase
 .from("product_materials")
 .select("*")
 .eq("product_id",id)
@@ -119,13 +126,9 @@ let {data,error}=await supabase
 
 if(!data){
 
-/* AUTO CREATE ROW */
-
 await supabase
 .from("product_materials")
-.insert({
-product_id:id
-});
+.insert({product_id:id});
 
 data={};
 
@@ -138,6 +141,7 @@ diamondCount.value=data.diamond_count || "";
 woodType.value=data.wood_type || "";
 
 }
+
 
 /* VARIANTS */
 
@@ -173,6 +177,7 @@ renderSizes();
 }
 
 colorSelect.onchange=selectVariant;
+
 
 /* IMAGES */
 
@@ -220,17 +225,19 @@ renderImages();
 
 }
 
+
 /* SIZES */
 
 function renderSizes(){
 
 sizeList.innerHTML="";
 
-(currentVariant.variant_stock||[]).forEach(s=>{
+(currentVariant?.variant_stock||[]).forEach(s=>{
 sizeList.innerHTML+=`<div>Size ${s.size} | Stock ${s.stock}</div>`;
 });
 
 }
+
 
 /* SPECS */
 
@@ -244,26 +251,133 @@ const {data}=await supabase
 specList.innerHTML="";
 
 (data||[]).forEach(s=>{
+
 specList.innerHTML+=`
+
 <div class="spec-row">
+
 <input class="spec-name" value="${s.spec_name}">
 <input class="spec-value" value="${s.spec_value}">
-</div>`;
+
+</div>
+
+`;
+
 });
 
 }
 
 document.getElementById("addSpec").onclick=()=>{
+
 specList.innerHTML+=`
+
 <div class="spec-row">
+
 <input class="spec-name" placeholder="Spec name">
 <input class="spec-value" placeholder="Value">
-</div>`;
+
+</div>
+
+`;
+
 };
+
+
+/* REVIEWS */
+
+async function loadReviews(){
+
+const {data}=await supabase
+.from("product_reviews")
+.select("*")
+.eq("product_id",id);
+
+reviewList.innerHTML="";
+
+(data||[]).forEach(r=>{
+
+reviewList.innerHTML+=`
+
+<div class="review-row">
+
+<input class="review-name" value="${r.name}">
+<input class="review-rating" value="${r.rating}">
+<textarea class="review-text">${r.review}</textarea>
+
+</div>
+
+`;
+
+});
+
+}
+
+document.getElementById("addReview").onclick=()=>{
+
+reviewList.innerHTML+=`
+
+<div class="review-row">
+
+<input class="review-name" placeholder="Customer name">
+<input class="review-rating" placeholder="Rating (1-5)">
+<textarea class="review-text" placeholder="Review"></textarea>
+
+</div>
+
+`;
+
+};
+
+
+/* FAQ */
+
+async function loadFAQ(){
+
+const {data}=await supabase
+.from("product_faq")
+.select("*")
+.eq("product_id",id);
+
+faqAdmin.innerHTML="";
+
+(data||[]).forEach(f=>{
+
+faqAdmin.innerHTML+=`
+
+<div class="faq-row">
+
+<input class="faq-q" value="${f.question}">
+<textarea class="faq-a">${f.answer}</textarea>
+
+</div>
+
+`;
+
+});
+
+}
+
+document.getElementById("addFaq").onclick=()=>{
+
+faqAdmin.innerHTML+=`
+
+<div class="faq-row">
+
+<input class="faq-q" placeholder="Question">
+<textarea class="faq-a" placeholder="Answer"></textarea>
+
+</div>
+
+`;
+
+};
+
 
 /* SAVE */
 
 saveBtn.onclick=async()=>{
+
+/* PRODUCT */
 
 await supabase
 .from("products")
@@ -285,6 +399,7 @@ active:active.checked
 })
 .eq("id",id);
 
+
 /* MATERIALS */
 
 await supabase
@@ -296,7 +411,10 @@ gold_weight:goldWeight.value,
 diamond_carat:diamondCarat.value,
 diamond_count:diamondCount.value,
 wood_type:woodType.value
+},{
+onConflict:"product_id"
 });
+
 
 /* SPECS */
 
@@ -305,12 +423,14 @@ await supabase
 .delete()
 .eq("product_id",id);
 
-document.querySelectorAll(".spec-row").forEach(async row=>{
+const specRows=[...document.querySelectorAll(".spec-row")];
+
+for(const row of specRows){
 
 const n=row.querySelector(".spec-name").value;
 const v=row.querySelector(".spec-value").value;
 
-if(!n||!v) return;
+if(!n||!v) continue;
 
 await supabase
 .from("product_specs")
@@ -320,11 +440,90 @@ spec_name:n,
 spec_value:v
 });
 
+}
+
+
+/* CUSTOMIZATION */
+
+await supabase
+.from("product_customization")
+.delete()
+.eq("product_id",id);
+
+const options=[...document.querySelectorAll(".customOpt:checked")]
+.map(o=>o.value);
+
+for(const opt of options){
+
+await supabase
+.from("product_customization")
+.insert({
+product_id:id,
+option_name:opt
 });
+
+}
+
+
+/* REVIEWS */
+
+await supabase
+.from("product_reviews")
+.delete()
+.eq("product_id",id);
+
+const reviews=[...document.querySelectorAll(".review-row")];
+
+for(const r of reviews){
+
+const name=r.querySelector(".review-name").value;
+const rating=r.querySelector(".review-rating").value;
+const review=r.querySelector(".review-text").value;
+
+if(!name||!review) continue;
+
+await supabase
+.from("product_reviews")
+.insert({
+product_id:id,
+name:name,
+rating:rating,
+review:review
+});
+
+}
+
+
+/* FAQ */
+
+await supabase
+.from("product_faq")
+.delete()
+.eq("product_id",id);
+
+const faqs=[...document.querySelectorAll(".faq-row")];
+
+for(const f of faqs){
+
+const q=f.querySelector(".faq-q").value;
+const a=f.querySelector(".faq-a").value;
+
+if(!q||!a) continue;
+
+await supabase
+.from("product_faq")
+.insert({
+product_id:id,
+question:q,
+answer:a
+});
+
+}
 
 alert("Product updated");
 
 };
+
 
 /* INIT */
 
@@ -333,4 +532,3 @@ await loadCategories();
 await loadProduct();
 
 });
-
