@@ -111,19 +111,31 @@ await loadSpecs();
 
 async function loadMaterials(){
 
-const {data}=await supabase
+let {data,error}=await supabase
 .from("product_materials")
 .select("*")
 .eq("product_id",id)
-.single();
+.maybeSingle();
 
-if(!data) return;
+if(!data){
 
-goldType.value=data.gold_type||"";
-goldWeight.value=data.gold_weight||"";
-diamondCarat.value=data.diamond_carat||"";
-diamondCount.value=data.diamond_count||"";
-woodType.value=data.wood_type||"";
+/* AUTO CREATE ROW */
+
+await supabase
+.from("product_materials")
+.insert({
+product_id:id
+});
+
+data={};
+
+}
+
+goldType.value=data.gold_type || "";
+goldWeight.value=data.gold_weight || "";
+diamondCarat.value=data.diamond_carat || "";
+diamondCount.value=data.diamond_count || "";
+woodType.value=data.wood_type || "";
 
 }
 
@@ -321,3 +333,4 @@ await loadCategories();
 await loadProduct();
 
 });
+
