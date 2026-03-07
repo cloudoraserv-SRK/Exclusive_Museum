@@ -444,3 +444,14 @@ red:"#8b0000"
 
           }
 
+async function loadDescription() {
+  const { data } = await supabase
+    .from("products")
+    .select("seo_description")
+    .eq("slug","royal-sandalwood-watch")
+    .single();
+
+  document.getElementById("seoDescription").innerHTML = data.seo_description;
+}
+
+loadDescription();
