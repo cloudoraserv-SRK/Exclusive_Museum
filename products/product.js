@@ -99,7 +99,7 @@ const {data}=await supabase
 .from("product_materials")
 .select("*")
 .eq("product_id",productId)
-.single();
+.maybesingle();
 
 if(!data) return;
 
@@ -320,3 +320,4 @@ red:"#8b0000"
 }[c?.toLowerCase()]||"#ccc";
 
 }
+
