@@ -225,7 +225,39 @@ renderImages();
 
 }
 
+const imageInput = document.getElementById("images");
 
+imageInput.addEventListener("change", uploadImages);
+
+async function uploadImages(e){
+
+if(!currentVariant) return;
+
+const files=[...e.target.files];
+
+for(const file of files){
+
+const path=`${id}/${Date.now()}_${file.name}`;
+
+await supabase.storage
+.from("product-images")
+.upload(path,file);
+
+currentVariant.image_gallery=currentVariant.image_gallery||[];
+currentVariant.image_gallery.push(path);
+
+}
+
+await supabase
+.from("variants")
+.update({
+image_gallery:currentVariant.image_gallery
+})
+.eq("id",currentVariant.id);
+
+renderImages();
+
+}
 /* SIZES */
 
 function renderSizes(){
@@ -532,4 +564,5 @@ await loadCategories();
 await loadProduct();
 
 });
+
 
