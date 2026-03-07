@@ -244,7 +244,7 @@ font-size:13px;
 margin-top:140px;
 padding:130px 30px;
 text-align:center;
-background:url("/images/sandalwood-forest.jpg") center/cover no-repeat;
+background:url("../assets/images/sandalwood-forest.jpg") center/cover no-repeat;
 position:relative;
 }
 
@@ -614,3 +614,4 @@ font-size:13px;
 }
 
 }
+
