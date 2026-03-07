@@ -52,63 +52,73 @@
 </header>
 <!-- ================= CHECKOUT ================= -->
 <main class="checkout">
-  <div class="checkout-container">
 
-    <h1>Secure Checkout</h1>
+<div class="checkout-grid">
 
-    <!-- ================= ORDER SUMMARY ================= -->
-    <div class="checkout-box">
-      <h3>Order Summary</h3>
+<!-- ORDER SUMMARY -->
 
-      <div id="orderSummary" class="order-summary">
-        <!-- JS will inject items -->
-      </div>
+<section class="checkout-box">
 
-      <div class="total-row">
-        <span>Total Amount</span>
-        <strong id="orderTotal">₹0</strong>
-      </div>
-    </div>
+<h2>Order Summary</h2>
 
-    <!-- ================= CUSTOMER DETAILS ================= -->
-    <div class="checkout-box">
-      <h3>Customer Details</h3>
+<div id="orderSummary"></div>
 
-      <input type="text" id="customerName" placeholder="Full Name" required>
+<div class="total">
+<span>Total</span>
+<strong id="orderTotal">$0</strong>
+</div>
 
-      <input type="email" id="customerEmail" placeholder="Email Address" required>
+</section>
 
-      <input type="tel" id="customerPhone" placeholder="Mobile Number" required>
 
-      <textarea id="customerAddress" placeholder="Full Delivery Address" required></textarea>
+<!-- CUSTOMER DETAILS -->
 
-      <input type="text" id="customerCity" placeholder="City" required>
+<section class="checkout-box">
 
-      <input type="text" id="customerPincode" placeholder="Pincode" required>
-    </div>
+<h2>Customer Details</h2>
 
-    <!-- ================= PAYMENT DETAILS ================= -->
-    <div class="checkout-box">
-      <h3>Payment Details</h3>
+<input id="name" placeholder="Full Name">
 
-      <!-- Cashfree required hidden fields -->
-      <input type="hidden" id="orderId">
-      <input type="hidden" id="orderAmount">
-      <input type="hidden" id="orderCurrency" value="INR">
+<input id="email" placeholder="Email">
 
-      <p class="secure-note">
-        You will be redirected to Cashfree to complete payment securely.
-      </p>
-    </div>
+<input id="phone" placeholder="Phone">
 
-    <!-- ================= PLACE ORDER ================= -->
-    <button id="payNowBtn" class="checkout-btn">
-      Pay Securely
-    </button>
+<textarea id="address" placeholder="Full Address"></textarea>
 
-  </div>
+<input id="city" placeholder="City">
+
+<input id="zip" placeholder="ZIP Code">
+
+</section>
+
+
+<!-- PAYMENT -->
+
+<section class="checkout-box">
+
+<h2>Payment Method</h2>
+
+<select id="paymentMethod">
+
+<option value="card">Debit / Credit Card</option>
+<option value="paypal">PayPal</option>
+<option value="wire">Wire Transfer</option>
+<option value="crypto">Bitcoin / Crypto</option>
+<option value="gift">Gift Card</option>
+
+</select>
+
+<div id="paymentInstructions"></div>
+
+</section>
+
+<button id="placeOrderBtn" class="place-order">
+Place Order
+</button>
+
+</div>
+
 </main>
-
 
 <!-- ================= FOOTER ================= -->
 <footer class="footer" id="contact">
@@ -262,6 +272,7 @@ payBtn.addEventListener("click", async () => {
 </script>
 </body>
 </html>
+
 
 
 
