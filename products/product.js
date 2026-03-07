@@ -2,6 +2,8 @@ import { supabase } from "../admin/supabaseClient.js";
 
 const slug = new URLSearchParams(location.search).get("slug");
 
+/* ELEMENTS */
+
 const productName=document.getElementById("productName");
 const productDesc=document.getElementById("productDesc");
 const productPrice=document.getElementById("productPrice");
@@ -9,11 +11,18 @@ const productMrp=document.getElementById("productMrp");
 const productBrand=document.getElementById("productBrand");
 const longDesc=document.getElementById("longDesc");
 
+const productSku=document.getElementById("productSku");
+const stockStatus=document.getElementById("stockStatus");
+
 const galleryMain=document.getElementById("galleryMain");
 const thumbs=document.getElementById("thumbs");
 
 const colorsEl=document.getElementById("colors");
 const sizesEl=document.getElementById("sizes");
+
+const specGrid=document.getElementById("specGrid");
+const materialsGrid=document.getElementById("materialsGrid");
+const customGrid=document.getElementById("customGrid");
 
 const addToCartBtn=document.getElementById("addToCartBtn");
 
@@ -35,6 +44,11 @@ price,
 mrp,
 short_description,
 long_description,
+case_size,
+movement,
+glass,
+water_resistance,
+crafting_time,
 brands:brand_id(name)
 `)
 .eq("slug",slug)
@@ -53,11 +67,76 @@ productBrand.textContent=data.brands?.name || "";
 
 longDesc.textContent=data.long_description;
 
+/* WATCH SPECS */
+
+specGrid.innerHTML=`
+
+<div><span>Case Size</span><strong>${data.case_size||"-"}</strong></div>
+
+<div><span>Movement</span><strong>${data.movement||"-"}</strong></div>
+
+<div><span>Glass</span><strong>${data.glass||"-"}</strong></div>
+
+<div><span>Water Resistance</span><strong>${data.water_resistance||"-"}</strong></div>
+
+<div><span>Crafting Time</span><strong>${data.crafting_time||"-"}</strong></div>
+
+`;
+
+await loadMaterials();
+await loadCustomization();
 await loadVariants();
 
 }
 
 loadProduct();
+
+/* ================= MATERIALS ================= */
+
+async function loadMaterials(){
+
+const {data}=await supabase
+.from("product_materials")
+.select("*")
+.eq("product_id",productId)
+.single();
+
+if(!data) return;
+
+materialsGrid.innerHTML=`
+
+<div><span>Gold Type</span><strong>${data.gold_type||"-"}</strong></div>
+
+<div><span>Gold Weight</span><strong>${data.gold_weight||"-"} g</strong></div>
+
+<div><span>Diamond Carat</span><strong>${data.diamond_carat||"-"}</strong></div>
+
+<div><span>Diamond Count</span><strong>${data.diamond_count||"-"}</strong></div>
+
+<div><span>Wood Type</span><strong>${data.wood_type||"-"}</strong></div>
+
+`;
+
+}
+
+/* ================= CUSTOMIZATION ================= */
+
+async function loadCustomization(){
+
+const {data}=await supabase
+.from("product_customization")
+.select("*")
+.eq("product_id",productId);
+
+customGrid.innerHTML="";
+
+(data||[]).forEach(c=>{
+
+customGrid.innerHTML+=`<span class="custom-item">${c.option_name}</span>`;
+
+});
+
+}
 
 /* ================= VARIANTS ================= */
 
@@ -67,6 +146,7 @@ const {data}=await supabase
 .from("variants")
 .select(`
 id,
+sku,
 color,
 image_gallery,
 variant_stock(size,stock)
@@ -77,7 +157,7 @@ variants=data||[];
 
 renderColors();
 
-setVariant(variants[0]);
+if(variants.length) setVariant(variants[0]);
 
 }
 
@@ -120,6 +200,8 @@ function setVariant(v){
 
 currentVariant=v;
 
+productSku.textContent=v.sku || "-";
+
 renderImages(v.image_gallery||[]);
 
 renderSizes(v.variant_stock||[]);
@@ -137,7 +219,7 @@ images.forEach((path,i)=>{
 
 const {data}=supabase.storage
 .from("product-images")
-.getPublicUrl(path,{transform:{width:1200}});
+.getPublicUrl(path);
 
 const url=data.publicUrl;
 
@@ -164,7 +246,11 @@ function renderSizes(stock){
 
 sizesEl.innerHTML="";
 
+let totalStock=0;
+
 stock.forEach(s=>{
+
+totalStock+=s.stock;
 
 if(s.stock<=0) return;
 
@@ -188,6 +274,8 @@ selectedSize=s.size;
 sizesEl.appendChild(btn);
 
 });
+
+stockStatus.textContent=totalStock>0 ? "In Stock" : "Out of Stock";
 
 }
 
@@ -217,7 +305,7 @@ alert("Added to cart");
 
 };
 
-/* COLOR MAP */
+/* ================= COLOR MAP ================= */
 
 function mapColor(c){
 
