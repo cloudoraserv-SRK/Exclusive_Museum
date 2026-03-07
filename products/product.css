@@ -615,3 +615,23 @@ font-size:13px;
 
 }
 
+.custom-grid{
+display:flex;
+flex-wrap:wrap;
+gap:12px;
+margin-top:10px;
+}
+
+.custom-box{
+border:1px solid #ddd;
+padding:10px 14px;
+border-radius:6px;
+cursor:pointer;
+display:flex;
+gap:8px;
+align-items:center;
+}
+
+.custom-box input{
+accent-color:black;
+}
