@@ -133,94 +133,139 @@ const countEl = document.getElementById("cartCount");
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
 /* ================= RENDER CART ================= */
-function renderCart() {
-  itemsEl.innerHTML = "";
-  let total = 0;
-  let count = 0;
 
-  if (cart.length === 0) {
-    itemsEl.innerHTML = `
-      <div class="empty-cart">
-        <h2>Your cart is empty 🛒</h2>
-        <p>Add something amazing to get started</p>
-        <a href="../index.html" class="shop-btn">Continue Shopping</a>
-      </div>
-    `;
-    totalEl.innerText = "₹0";
-    if (countEl) countEl.innerText = "0";
-    return;
-  }
+function renderCart(){
 
-  cart.forEach((item, i) => {
+itemsEl.innerHTML="";
 
-    total += item.price * item.qty;
-    count += item.qty;
+let total=0;
+let count=0;
 
-    const imagePath = item.image && item.image.trim() !== ""
-      ? item.image
-      : "../assets/images/placeholder.png";
+if(!cart.length){
 
-    itemsEl.innerHTML += `
-      <div class="cart-row" data-index="${i}">
-        
-        <img src="${imagePath}" 
-             class="cart-img"
-             onerror="this.src='../assets/images/placeholder.png'">
+itemsEl.innerHTML=`
 
-        <div class="cart-info">
-          <h4>${item.name}</h4>
-          <p><strong>Color:</strong> ${item.color || "N/A"}</p>
-          <p><strong>Size:</strong> ${item.size}</p>
+<div class="empty-cart">
 
-          <div class="qty-row">
-            <button onclick="updateQty(${i}, -1)">−</button>
-            <span>${item.qty}</span>
-            <button onclick="updateQty(${i}, 1)">+</button>
-          </div>
+<h2>Your cart is empty 🛒</h2>
 
-          <div class="price-row">
-            ₹${item.price * item.qty}
-          </div>
-        </div>
+<p>Add something amazing to get started</p>
 
-        <button class="remove-btn" onclick="removeItem(${i})">✕</button>
+<a href="../index.html" class="shop-btn">Continue Shopping</a>
 
-      </div>
-    `;
-  });
+</div>
 
-  totalEl.innerText = `₹${total}`;
-  if (countEl) countEl.innerText = count;
+`;
 
-  localStorage.setItem("cart", JSON.stringify(cart));
+totalEl.textContent="$0";
+
+if(countEl) countEl.textContent="0";
+
+return;
+
+}
+
+cart.forEach((item,i)=>{
+
+const img=item.image || "../assets/images/placeholder.png";
+
+total+=item.price*item.qty;
+
+count+=item.qty;
+
+itemsEl.insertAdjacentHTML("beforeend",`
+
+<div class="cart-row" data-index="${i}">
+
+<img src="${img}" class="cart-img"
+onerror="this.src='../assets/images/placeholder.png'">
+
+<div class="cart-info">
+
+<h4>${item.name}</h4>
+
+<p><strong>Size:</strong> ${item.size || "-"}</p>
+
+<div class="qty-row">
+
+<button onclick="updateQty(${i},-1)">−</button>
+
+<span>${item.qty}</span>
+
+<button onclick="updateQty(${i},1)">+</button>
+
+</div>
+
+<div class="price-row">
+
+$${item.price*item.qty}
+
+</div>
+
+</div>
+
+<button class="remove-btn" onclick="removeItem(${i})">
+
+✕
+
+</button>
+
+</div>
+
+`);
+
+});
+
+totalEl.textContent="$"+total;
+
+if(countEl) countEl.textContent=count;
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
 }
 
 /* ================= UPDATE QTY ================= */
-window.updateQty = function (i, change) {
-  cart[i].qty += change;
 
-  if (cart[i].qty <= 0) {
-    removeItem(i);
-    return;
-  }
+window.updateQty=function(i,change){
 
-  renderCart();
+cart[i].qty+=change;
+
+if(cart[i].qty<=0){
+
+removeItem(i);
+
+return;
+
+}
+
+renderCart();
+
 };
 
-/* ================= REMOVE ITEM ================= */
-window.removeItem = function (i) {
-  const row = document.querySelector(`.cart-row[data-index="${i}"]`);
+/* ================= REMOVE ================= */
 
-  if (row) {
-    row.classList.add("fade-out");
-    setTimeout(() => {
-      cart.splice(i, 1);
-      renderCart();
-    }, 300);
-  }
+window.removeItem=function(i){
+
+const row=document.querySelector(`.cart-row[data-index="${i}"]`);
+
+if(row){
+
+row.classList.add("fade-out");
+
+setTimeout(()=>{
+
+cart.splice(i,1);
+
+renderCart();
+
+},300);
+
+}
+
 };
 
 /* ================= INIT ================= */
+
 renderCart();
 
 
@@ -229,6 +274,7 @@ renderCart();
 
 </body>
 </html>
+
 
 
 
