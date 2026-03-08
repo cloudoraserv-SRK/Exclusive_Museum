@@ -438,6 +438,7 @@ black:"#000",
 brown:"#8B4513",
 gold:"#d4af37",
 silver:"#c0c0c0",
+redsandalwood:"#d1584b",
 red:"#8b0000"
 
 }[c?.toLowerCase()]||"#ccc";
@@ -470,3 +471,4 @@ sec.classList.add("active");
 });
 
 });
+
