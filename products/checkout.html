@@ -188,7 +188,7 @@ const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
 const orderSummary = document.getElementById("orderSummary");
 const orderTotal = document.getElementById("orderTotal");
-
+const txnId=document.getElementById("txnId").value;
 let total = 0;
 
 /* CART RENDER */
@@ -222,47 +222,48 @@ orderTotal.textContent="$"+total;
 
 /* PAYMENT INSTRUCTIONS */
 
-const paymentSelect=document.getElementById("paymentMethod");
-const paymentBox=document.getElementById("paymentInstructions");
-
-paymentSelect.addEventListener("change",()=>{
+paymentSelect.onchange=()=>{
 
 const method=paymentSelect.value;
 
 let html="";
 
-switch(method){
+if(method==="wire"){
 
-case "paypal":
+html=`
+Bank Transfer Details<br><br>
 
-html=`Send PayPal payment to:<br><b>kharehappy3005@gmail.com</b>`;
-break;
+Account Name: Exclusive Museum<br>
+Bank: Example Bank<br>
+Account No: 123456789<br>
+IFSC: EXCL0001<br><br>
 
-case "wire":
+After payment enter your Transaction ID below
+`;
 
-html=`Bank Transfer:<br>Account Name: Exclusive Museum<br>SWIFT: EXCLBANK`;
-break;
+}
 
-case "crypto":
+if(method==="paypal"){
 
-html=`Bitcoin Wallet:<br><b>bc1qexamplewallet</b>`;
-break;
+html=`
+Send payment to PayPal:<br>
+<b>kharehappy3005@gmail.com</b>
+`;
 
-case "card":
+}
 
-html=`For card payments please contact us via WhatsApp.`;
-break;
+if(method==="crypto"){
 
-case "gift":
-
-html=`<input id="giftCode" placeholder="Enter Gift Card Code">`;
-break;
+html=`
+Bitcoin Wallet:<br>
+<b>bc1qexamplewallet</b>
+`;
 
 }
 
 paymentBox.innerHTML=html;
 
-});
+};
 
 /* PLACE ORDER */
 
@@ -297,13 +298,17 @@ order_id:orderCode,
 customer_name:name,
 email:email,
 phone:phone,
+
 address:address,
 city:city,
 zip:zip,
 
 payment_method:payment,
+payment_reference:txnId,
+
 payment_status:"pending",
-order_status:"payment_in_progress",
+order_status:"verification_pending",
+
 total_amount:total
 
 })
@@ -341,12 +346,13 @@ localStorage.removeItem("cart");
 
 alert("Order placed! Your Order ID: "+orderCode);
 
-window.location.href="../products/track.html?id="+orderCode;
+window.location.href="../products/confirmation.html?id="+orderCode;
 
 };
 </script>
 </body>
 </html>
+
 
 
 
