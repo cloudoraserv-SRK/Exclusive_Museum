@@ -71,24 +71,6 @@ cart.classList.remove("cart-animate");
 },600);
 }
 
-
-section{
-position:relative;
-}
-
-section::before{
-content:"";
-position:absolute;
-top:-120px;
-left:50%;
-transform:translateX(-50%);
-width:600px;
-height:300px;
-background:radial-gradient(circle,rgba(198,168,74,.15),transparent 70%);
-filter:blur(80px);
-pointer-events:none;
-}
-
 document.querySelectorAll(".btn-luxury").forEach(btn => {
 
 btn.addEventListener("mousemove", e => {
@@ -107,3 +89,4 @@ btn.style.transform="translate(0,0)";
 });
 
 });
+
