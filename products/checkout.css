@@ -243,3 +243,32 @@ font-size:18px;
 }
 
 }
+
+.payment-info{
+
+background:#111;
+border:1px solid #333;
+padding:15px;
+border-radius:6px;
+margin-top:15px;
+font-size:14px;
+
+}
+
+.payment-info h4{
+
+margin-bottom:8px;
+color:#d4af37;
+
+}
+
+.payment-info input{
+
+width:100%;
+padding:8px;
+margin-top:8px;
+border-radius:4px;
+border:1px solid #444;
+
+}
+
