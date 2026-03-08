@@ -22,6 +22,7 @@ GRID LAYOUT
 display:grid;
 grid-template-columns:1.2fr .8fr;
 gap:40px;
+align-items:start;
 }
 
 /* ===============================
@@ -37,7 +38,10 @@ box-shadow:0 20px 60px rgba(0,0,0,.6);
 transition:.35s;
 }
 
-.checkout-box:hover
+.checkout-box:hover{
+transform:translateY(-4px);
+box-shadow:0 30px 70px rgba(0,0,0,.8);
+}
 
 /* ===============================
 HEADINGS
@@ -57,27 +61,28 @@ INPUTS
 .checkout-box input,
 .checkout-box textarea,
 .checkout-box select{
-
 width:100%;
 margin-bottom:16px;
-padding:14px 14px;
+padding:14px;
 border-radius:8px;
 border:1px solid #1e1e1e;
 background:#111;
 color:#fff;
 font-size:14px;
 transition:.25s;
+}
 
+.checkout-box input::placeholder,
+.checkout-box textarea::placeholder{
+color:#888;
 }
 
 .checkout-box input:focus,
 .checkout-box textarea:focus,
 .checkout-box select:focus{
-
 outline:none;
 border-color:#d4af37;
-box-shadow:0 0 0 1px rgba(212,175,55,.2);
-
+box-shadow:0 0 0 1px rgba(212,175,55,.25);
 }
 
 .checkout-box textarea{
@@ -114,30 +119,23 @@ PLACE ORDER BUTTON
 ================================= */
 
 .place-order{
-
 width:100%;
 padding:16px;
 margin-top:20px;
-
 background:linear-gradient(135deg,#d4af37,#b8963b);
 border:none;
 border-radius:8px;
-
 color:#000;
 font-size:16px;
 font-weight:600;
 letter-spacing:.5px;
-
 cursor:pointer;
 transition:.35s;
-
 }
 
 .place-order:hover{
-
 transform:translateY(-3px);
 box-shadow:0 20px 50px rgba(212,175,55,.35);
-
 }
 
 /* ===============================
@@ -163,38 +161,85 @@ cursor:pointer;
 transition:.3s;
 }
 
-.payment-method:hover
+.payment-method:hover{
+border-color:#d4af37;
+background:#151515;
+}
 
 /* ===============================
-RESPONSIVE
+TABLET
 ================================= */
 
-@media(max-width:900px){
+@media(max-width:1024px){
+
+.checkout{
+padding:70px 20px;
+}
 
 .checkout-grid{
 grid-template-columns:1fr;
 gap:30px;
 }
 
+}
+
+/* ===============================
+MOBILE
+================================= */
+
+@media(max-width:768px){
+
 .checkout{
 padding:60px 18px;
 }
 
+.checkout-box{
+padding:25px;
 }
 
-@media(max-width:500px){
+.checkout-box h2{
+font-size:20px;
+}
+
+.summary-row{
+font-size:14px;
+}
+
+.place-order{
+font-size:15px;
+padding:15px;
+}
+
+}
+
+/* ===============================
+SMALL MOBILE
+================================= */
+
+@media(max-width:480px){
 
 .checkout-box{
-padding:22px;
+padding:20px;
 }
 
 .checkout-box h2{
 font-size:18px;
 }
 
+.checkout-box input,
+.checkout-box textarea,
+.checkout-box select{
+padding:12px;
+font-size:13px;
+}
+
 .place-order{
-font-size:15px;
 padding:14px;
+font-size:14px;
+}
+
+.summary-row.total{
+font-size:18px;
 }
 
 }
