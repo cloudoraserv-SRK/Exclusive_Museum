@@ -145,27 +145,68 @@ body{
 }
 
 /* BUTTON */
+/* ADD TO CART BUTTON - LUXURY STYLE */
+
 .add-cart-btn{
   margin-top:auto;
-  padding:12px;
+  padding:14px 22px;
   border:none;
-  border-radius:40px;
-  background:linear-gradient(135deg,#ff3c3c,#ff7a00);
+  border-radius:50px;
+  background:linear-gradient(135deg,#ff3c3c,#ff7a00,#ffb347);
   color:#fff;
   font-weight:600;
+  font-size:15px;
+  letter-spacing:.5px;
   cursor:pointer;
-  transition:.3s;
-  box-shadow:0 8px 20px rgba(255,122,0,.25);
+  position:relative;
+  overflow:hidden;
+  transition:all .35s ease;
+  box-shadow:
+    0 10px 25px rgba(255,122,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.3);
 }
 
+/* Hover effect */
 .add-cart-btn:hover{
-  transform:translateY(-3px);
-  box-shadow:0 15px 35px rgba(255,122,0,.35);
+  transform:translateY(-4px) scale(1.02);
+  box-shadow:
+    0 18px 45px rgba(255,122,0,.45),
+    0 0 15px rgba(255,122,0,.25);
 }
 
+/* Click effect */
+.add-cart-btn:active{
+  transform:translateY(0) scale(.98);
+  box-shadow:0 5px 15px rgba(0,0,0,.25);
+}
+
+/* Shine animation */
+.add-cart-btn::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:60%;
+  height:100%;
+  background:linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,.35),
+    transparent
+  );
+  transition:.6s;
+}
+
+.add-cart-btn:hover::before{
+  left:120%;
+}
+
+/* Disabled */
 .add-cart-btn:disabled{
   opacity:.5;
   cursor:not-allowed;
+  box-shadow:none;
+  background:#999;
 }
 
 /* ================= FILTER PANEL ================= */
@@ -314,3 +355,4 @@ a{
 .product-card:hover{
   box-shadow:0 25px 50px rgba(0,0,0,.15);
                               }
+
