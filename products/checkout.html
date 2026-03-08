@@ -180,7 +180,7 @@ Place Order
    LOAD CART
 ========================= -->
 
-<script>
+<script type="module">
 import { supabase } from "../admin/supabaseClient.js";
 
 const cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -346,6 +346,7 @@ window.location.href="../products/track.html?id="+orderCode;
 </script>
 </body>
 </html>
+
 
 
 
