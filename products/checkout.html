@@ -323,8 +323,12 @@ const {data,error}=await supabase
 .insert({
 
 order_id:orderCode,
+
 customer_name:name,
+
 email:email,
+user_email:email,
+
 phone:phone,
 
 address:address,
@@ -384,6 +388,7 @@ window.location.href="../products/track.html?id="+orderCode;
 </script>
 </body>
 </html>
+
 
 
 
