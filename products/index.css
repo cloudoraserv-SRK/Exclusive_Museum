@@ -201,14 +201,6 @@ body{
   left:120%;
 }
 
-/* Disabled */
-.add-cart-btn:disabled{
-  opacity:.5;
-  cursor:not-allowed;
-  box-shadow:none;
-  background:#999;
-}
-
 /* ================= FILTER PANEL ================= */
 
 .filter-panel{
@@ -355,4 +347,5 @@ a{
 .product-card:hover{
   box-shadow:0 25px 50px rgba(0,0,0,.15);
                               }
+
 
