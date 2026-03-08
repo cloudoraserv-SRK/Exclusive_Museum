@@ -183,109 +183,103 @@ Place Order
 <script>
 import { supabase } from "../admin/supabaseClient.js";
 
-const cart=JSON.parse(localStorage.getItem("cart")||"[]");
+const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-const orderSummary=document.getElementById("orderSummary");
-const orderTotal=document.getElementById("orderTotal");
+const orderSummary = document.getElementById("orderSummary");
+const orderTotal = document.getElementById("orderTotal");
 
-let total=0;
+let total = 0;
 
 /* CART RENDER */
 
+if(cart.length===0){
+
+orderSummary.innerHTML="<p>Your cart is empty</p>";
+
+}else{
+
 cart.forEach(item=>{
 
-const div=document.createElement("div");
+const row=document.createElement("div");
 
-div.className="order-row";
+row.className="order-row";
 
-div.innerHTML=`
+row.innerHTML=`
 <span>${item.name} × ${item.qty}</span>
 <span>$${item.price*item.qty}</span>
 `;
 
-orderSummary.appendChild(div);
+orderSummary.appendChild(row);
 
 total+=item.price*item.qty;
 
 });
 
-orderTotal.textContent="$"+total;
+}
 
+orderTotal.textContent="$"+total;
 
 /* PAYMENT INSTRUCTIONS */
 
 const paymentSelect=document.getElementById("paymentMethod");
 const paymentBox=document.getElementById("paymentInstructions");
 
-paymentSelect.onchange=()=>{
+paymentSelect.addEventListener("change",()=>{
 
 const method=paymentSelect.value;
 
-if(method==="paypal"){
+let html="";
 
-paymentBox.innerHTML=`
-Send payment to PayPal:<br>
-<b>kharehappy3005@gmail.com</b>
-`;
+switch(method){
 
-}
+case "paypal":
 
-if(method==="wire"){
+html=`Send PayPal payment to:<br><b>kharehappy3005@gmail.com</b>`;
+break;
 
-paymentBox.innerHTML=`
-Bank Transfer Details:<br>
-Account Name: Exclusive Museum / DILIP <br>
-SWIFT: EXCLBANK
-`;
+case "wire":
 
-}
+html=`Bank Transfer:<br>Account Name: Exclusive Museum<br>SWIFT: EXCLBANK`;
+break;
 
-if(method==="crypto"){
+case "crypto":
 
-paymentBox.innerHTML=`
-Bitcoin Address:<br>
-<b>bc1qexamplewallet</b>
-`;
+html=`Bitcoin Wallet:<br><b>bc1qexamplewallet</b>`;
+break;
 
-}
+case "card":
 
-if(method==="card"){
+html=`For card payments please contact us via WhatsApp.`;
+break;
 
-paymentBox.innerHTML=`
-For card payments contact us:<br>
-WhatsApp or Call
-`;
+case "gift":
+
+html=`<input id="giftCode" placeholder="Enter Gift Card Code">`;
+break;
 
 }
 
-if(method==="gift"){
+paymentBox.innerHTML=html;
 
-paymentBox.innerHTML=`
-<input id="giftCode" placeholder="Enter Gift Card Code">
-`;
+});
 
-}
-
-};
-
-
-/* ORDER CREATE */
+/* PLACE ORDER */
 
 document.getElementById("placeOrderBtn").onclick=async()=>{
 
-const name=document.getElementById("name").value;
-const email=document.getElementById("email").value;
-const phone=document.getElementById("phone").value;
+const name=document.getElementById("name").value.trim();
+const email=document.getElementById("email").value.trim();
+const phone=document.getElementById("phone").value.trim();
 
-const address=document.getElementById("address").value;
-const city=document.getElementById("city").value;
-const zip=document.getElementById("zip").value;
+const address=document.getElementById("address").value.trim();
+const city=document.getElementById("city").value.trim();
+const zip=document.getElementById("zip").value.trim();
 
 const payment=paymentSelect.value;
 
 if(!name||!email||!phone||!address){
 
-alert("Fill all fields");
+alert("Please fill all required fields");
 return;
 
 }
@@ -294,30 +288,33 @@ const orderCode="EM-"+Date.now();
 
 /* INSERT ORDER */
 
-const {data}=await supabase
+const {data,error}=await supabase
 .from("orders")
 .insert({
 
 order_id:orderCode,
-
 customer_name:name,
 email:email,
 phone:phone,
-
 address:address,
 city:city,
 zip:zip,
 
 payment_method:payment,
 payment_status:"pending",
-
 order_status:"payment_in_progress",
-
 total_amount:total
 
 })
 .select()
 .single();
+
+if(error){
+
+alert("Order failed. Please try again.");
+return;
+
+}
 
 /* INSERT ITEMS */
 
@@ -328,12 +325,9 @@ await supabase
 .insert({
 
 order_id:data.id,
-
 product_id:item.product_id,
 variant_id:item.variant_id,
-
 product_name:item.name,
-
 size:item.size,
 price:item.price,
 qty:item.qty
@@ -346,12 +340,13 @@ localStorage.removeItem("cart");
 
 alert("Order placed! Your Order ID: "+orderCode);
 
-location.href="../products/track.html?id="+orderCode;
+window.location.href="../products/track.html?id="+orderCode;
 
 };
 </script>
 </body>
 </html>
+
 
 
 
