@@ -106,14 +106,13 @@
 <option value="paypal">PayPal</option>
 <option value="wire">Wire Transfer</option>
 <option value="crypto">Bitcoin / Crypto</option>
+<option value="gift">Gift Card</option>
 
 </select>
 
 <div id="paymentInstructions"></div>
 
-<input id="txnId" placeholder="Enter Transaction / Reference ID">
-
-</section>
+<input id="txnId" placeholder="Transaction / Reference ID (after payment)">
 
 </div>
 
@@ -176,7 +175,6 @@ Place Order
   </div>
 </footer>
 
-  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <!-- =========================
    LOAD CART
 ========================= -->
@@ -188,10 +186,13 @@ const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
 const orderSummary = document.getElementById("orderSummary");
 const orderTotal = document.getElementById("orderTotal");
-const txnId=document.getElementById("txnId").value;
+
+const paymentSelect = document.getElementById("paymentMethod");
+const paymentBox = document.getElementById("paymentInstructions");
+
 let total = 0;
 
-/* CART RENDER */
+/* ================= CART ================= */
 
 if(cart.length===0){
 
@@ -220,25 +221,39 @@ total+=item.price*item.qty;
 
 orderTotal.textContent="$"+total;
 
-/* PAYMENT INSTRUCTIONS */
 
-paymentSelect.onchange=()=>{
+/* ================= PAYMENT INFO ================= */
+
+paymentSelect.addEventListener("change",()=>{
 
 const method=paymentSelect.value;
 
 let html="";
 
+if(method==="card"){
+
+html=`
+<p>
+For Debit / Credit card payments please contact us:
+</p>
+
+<p>
+📞 +91 9532153763<br>
+💬 <a href="https://wa.me/919532153763" target="_blank">WhatsApp</a>
+</p>
+`;
+
+}
+
 if(method==="wire"){
 
 html=`
-Bank Transfer Details<br><br>
+<b>Bank Transfer Details</b><br><br>
 
 Account Name: Exclusive Museum<br>
 Bank: Example Bank<br>
 Account No: 123456789<br>
-IFSC: EXCL0001<br><br>
-
-After payment enter your Transaction ID below
+IFSC: EXCL0001
 `;
 
 }
@@ -246,8 +261,9 @@ After payment enter your Transaction ID below
 if(method==="paypal"){
 
 html=`
-Send payment to PayPal:<br>
-<b>kharehappy3005@gmail.com</b>
+Send PayPal payment to:<br>
+
+<b>sales@exclusivemuseum.cloud</b>
 `;
 
 }
@@ -255,17 +271,27 @@ Send payment to PayPal:<br>
 if(method==="crypto"){
 
 html=`
-Bitcoin Wallet:<br>
+Bitcoin Wallet Address:<br>
+
 <b>bc1qexamplewallet</b>
+`;
+
+}
+
+if(method==="gift"){
+
+html=`
+Enter your gift card code in the reference field.
 `;
 
 }
 
 paymentBox.innerHTML=html;
 
-};
+});
 
-/* PLACE ORDER */
+
+/* ================= PLACE ORDER ================= */
 
 document.getElementById("placeOrderBtn").onclick=async()=>{
 
@@ -277,11 +303,13 @@ const address=document.getElementById("address").value.trim();
 const city=document.getElementById("city").value.trim();
 const zip=document.getElementById("zip").value.trim();
 
+const txnId=document.getElementById("txnId").value.trim();
+
 const payment=paymentSelect.value;
 
 if(!name||!email||!phone||!address){
 
-alert("Please fill all required fields");
+alert("Please fill required fields");
 return;
 
 }
@@ -307,7 +335,7 @@ payment_method:payment,
 payment_reference:txnId,
 
 payment_status:"pending",
-order_status:"verification_pending",
+order_status:"payment_in_progress",
 
 total_amount:total
 
@@ -317,10 +345,12 @@ total_amount:total
 
 if(error){
 
-alert("Order failed. Please try again.");
+alert("Order failed");
+console.error(error);
 return;
 
 }
+
 
 /* INSERT ITEMS */
 
@@ -333,7 +363,9 @@ await supabase
 order_id:data.id,
 product_id:item.product_id,
 variant_id:item.variant_id,
+
 product_name:item.name,
+
 size:item.size,
 price:item.price,
 qty:item.qty
@@ -346,12 +378,13 @@ localStorage.removeItem("cart");
 
 alert("Order placed! Your Order ID: "+orderCode);
 
-window.location.href="../products/confirmation.html?id="+orderCode;
+window.location.href="../products/track.html?id="+orderCode;
 
 };
 </script>
 </body>
 </html>
+
 
 
 
