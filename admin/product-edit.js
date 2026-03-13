@@ -151,29 +151,38 @@ variant_stock(size,stock)
 
 variants=data||[];
 
-colorSelect.innerHTML=variants.map(v=>
+if(!variants.length){
+colorSelect.innerHTML="<option>No variants</option>";
+return;
+}
+
+colorSelect.innerHTML = variants.map(v =>
 `<option value="${v.id}">${v.color}</option>`
 ).join("");
 
-selectVariant();
-
-}
-
-function selectVariant(){
-
-currentVariant=variants.find(v=>v.id==colorSelect.value);
-
-if(!currentVariant) return;
-
-if(!currentVariant.image_gallery)
-currentVariant.image_gallery=[];
+colorSelect.value = variants[0].id;
+currentVariant = variants[0];
 
 renderImages();
 renderSizes();
 
 }
 
-colorSelect.onchange=selectVariant;
+
+/* VARIANT CHANGE */
+
+colorSelect.addEventListener("change",()=>{
+
+currentVariant = variants.find(v=>v.id===colorSelect.value);
+
+if(!currentVariant) return;
+
+currentVariant.image_gallery=currentVariant.image_gallery||[];
+
+renderImages();
+renderSizes();
+
+});
 
 
 /* IMAGE RENDER */
@@ -188,10 +197,8 @@ const {data}=supabase.storage
 .from("product-images")
 .getPublicUrl(path);
 
-const thumb=i===0 ? "thumb":"";
-
 imageGallery.innerHTML+=`
-<div class="img-box ${thumb}">
+<div class="img-box">
 <img src="${data.publicUrl}">
 <button data-i="${i}" class="remove-img">✕</button>
 </div>
@@ -200,7 +207,7 @@ imageGallery.innerHTML+=`
 });
 
 document.querySelectorAll(".remove-img").forEach(btn=>{
-btn.onclick=()=>removeImage(btn.dataset.i);
+btn.onclick=()=>removeImage(Number(btn.dataset.i));
 });
 
 }
@@ -253,9 +260,7 @@ currentVariant.image_gallery.push(path);
 
 await supabase
 .from("variants")
-.update({
-image_gallery:currentVariant.image_gallery
-})
+.update({image_gallery:currentVariant.image_gallery})
 .eq("id",currentVariant.id);
 
 renderImages();
