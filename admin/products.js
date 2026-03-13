@@ -3,6 +3,7 @@ import { supabase } from "./supabaseClient.js";
 const list = document.getElementById("productsList");
 
 async function loadProducts() {
+
   const { data: products, error } = await supabase
     .from("products")
     .select("*")
@@ -17,63 +18,92 @@ async function loadProducts() {
 
   for (let p of products) {
 
-    const { data: variants } = await supabase
-      .from("product_variants")
-      .select("color_name, image_gallery")
-      .eq("product_id", p.id);
+    /* GET IMAGE */
 
-    let imgHtml = `<div class="imgs empty">No image</div>`;
+    const { data: images } = await supabase
+      .from("variants")
+      .select("image_gallery")
+      .eq("product_id", p.id)
+      .limit(1);
 
-    const v = variants?.find(
-      v => Array.isArray(v.image_gallery) && v.image_gallery.length > 0
-    );
+    let imageUrl = "../assets/images/placeholder.png";
 
-    if (v) {
-      const url = supabase.storage
-        .from("products")
-        .getPublicUrl(v.image_gallery[0]).data.publicUrl;
+    if (images && images[0]?.image_gallery?.length) {
 
-      imgHtml = `<div class="imgs"><img src="${url}"></div>`;
+      const { data } = supabase.storage
+        .from("product-images")
+        .getPublicUrl(images[0].image_gallery[0]);
+
+      imageUrl = data.publicUrl;
     }
 
     const div = document.createElement("div");
     div.className = "product-card";
 
     div.innerHTML = `
-      ${imgHtml}
+
+      <img src="${imageUrl}" class="product-thumb">
+
       <div class="product-info">
+
         <h3>${p.name}</h3>
+
         <p>₹${p.price}</p>
-        <button onclick="editProduct('${p.id}')">Edit</button>
-        <button class="danger" onclick="deleteProduct('${p.id}')">Delete</button>
+
+        <button onclick="editProduct('${p.id}')">
+          Edit
+        </button>
+
+        <button class="danger" onclick="deleteProduct('${p.id}')">
+          Delete
+        </button>
+
       </div>
     `;
 
     list.appendChild(div);
   }
+
 }
 
-/* ACTIONS */
+/* EDIT */
+
 window.editProduct = (id) => {
   location.href = `product-edit.html?id=${id}`;
 };
 
+/* DELETE */
+
 window.deleteProduct = async (id) => {
+
   if (!confirm("Delete product?")) return;
 
   const { data: vars } = await supabase
-    .from("product_variants")
+    .from("variants")
     .select("id")
     .eq("product_id", id);
 
   for (let v of vars || []) {
-    await supabase.from("variant_stock").delete().eq("variant_id", v.id);
+
+    await supabase
+      .from("variant_stock")
+      .delete()
+      .eq("variant_id", v.id);
+
   }
 
-  await supabase.from("product_variants").delete().eq("product_id", id);
-  await supabase.from("products").delete().eq("id", id);
+  await supabase
+    .from("variants")
+    .delete()
+    .eq("product_id", id);
+
+  await supabase
+    .from("products")
+    .delete()
+    .eq("id", id);
 
   loadProducts();
+
 };
 
 loadProducts();
