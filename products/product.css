@@ -777,3 +777,67 @@ width:55px;
 .load-more-wrapper{
   text-align:center;
 }
+.lux-badge{
+position:absolute;
+top:20px;
+left:20px;
+background:#000;
+color:#fff;
+padding:6px 12px;
+font-size:12px;
+letter-spacing:1px;
+}
+
+.lux-emotion{
+margin:15px 0;
+font-style:italic;
+opacity:.8;
+}
+
+.lux-trust{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+margin:20px 0;
+font-size:14px;
+}
+
+.lux-story,
+.lux-crafting,
+.lux-gift,
+.lux-limited{
+max-width:1000px;
+margin:80px auto;
+text-align:center;
+line-height:1.7;
+}
+
+.craft-steps{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:20px;
+margin-top:30px;
+}
+
+.craft-steps div{
+background:#111;
+color:#fff;
+padding:12px;
+font-size:14px;
+}
+
+.lux-gift ul{
+list-style:none;
+padding:0;
+margin-top:20px;
+}
+
+.lux-gift li{
+margin:8px 0;
+}
+
+.lux-limited{
+background:#111;
+color:#fff;
+padding:50px;
+}
