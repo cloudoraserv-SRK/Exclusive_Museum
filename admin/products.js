@@ -4,10 +4,10 @@ const list = document.getElementById("productsList");
 
 async function loadProducts() {
 
-  const { data: products, error } = await supabase
-    .from("products")
-    .select("*")
-    .order("created_at", { ascending: false });
+ const { data: products, error } = await supabase
+  .from("products")
+  .select("id,name,price,mrp,images")
+  .order("created_at", { ascending: false });
 
   if (error) {
     alert("Failed to load products");
@@ -20,23 +20,15 @@ async function loadProducts() {
 
     /* GET IMAGE */
 
-    const { data: images } = await supabase
-      .from("variants")
-      .select("image_gallery")
-      .eq("product_id", p.id)
-      .limit(1);
+let imageUrl = "../assets/images/placeholder.png";
 
-    let imageUrl = "../assets/images/placeholder.png";
+if (p.images && p.images.length) {
+  const { data } = supabase.storage
+    .from("product-images")
+    .getPublicUrl(p.images[0]);
 
-    if (images && images[0]?.image_gallery?.length) {
-
-      const { data } = supabase.storage
-        .from("product-images")
-        .getPublicUrl(images[0].image_gallery[0]);
-
-      imageUrl = data.publicUrl;
-    }
-
+  imageUrl = data.publicUrl;
+}
     const div = document.createElement("div");
     div.className = "product-card";
 
