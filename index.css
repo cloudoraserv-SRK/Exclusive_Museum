@@ -554,3 +554,43 @@ section img{
 
 }
 
+.craft-section{
+padding:100px 20px;
+text-align:center;
+background:#0f0f0f;
+}
+
+.craft-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:30px;
+margin-top:40px;
+}
+
+.craft-card{
+background:#111;
+padding:30px;
+border-radius:12px;
+border:1px solid #1f1f1f;
+transition:.4s;
+}
+
+.craft-card:hover{
+transform:translateY(-8px);
+border-color:#d4af37;
+box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+
+.hero-note{
+margin-top:15px;
+font-size:14px;
+opacity:.8;
+}
+
+@media(max-width:900px){
+
+.craft-grid{
+grid-template-columns:1fr 1fr;
+}
+
+}
