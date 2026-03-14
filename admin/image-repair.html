@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Image Repair</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <a href="dashboard.html">← Back</a>
+    <h1>Repair Product Images</h1>
+    <button id="repairBtn" class="btn-outline">Normalize All</button>
+  </header>
+
+  <main class="admin-layout">
+    <section class="card">
+      <h2>Legacy Image Normalization</h2>
+      <p>
+        This tool rewrites `images`, `gallery_urls`, and `thumbnail_url` using the first valid
+        bucket path it can derive from current product data.
+      </p>
+      <pre id="repairLog" style="white-space:pre-wrap;"></pre>
+    </section>
+  </main>
+
+  <script type="module" src="image-repair.js"></script>
+</body>
+</html>

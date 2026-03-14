@@ -1,19 +1,4 @@
-import { supabase } from "./supabaseClient.js";
+import { requireAdminSession } from "./auth-guard.js";
 
-const ADMIN_EMAIL = "admin@exclusivemuseum.com";
-
-supabase.auth.onAuthStateChange((event, session) => {
-  if (!session?.user) {
-    location.href = "login.html";
-    return;
-  }
-
-  if (session.user.email !== ADMIN_EMAIL) {
-    supabase.auth.signOut();
-    location.href = "login.html";
-    return;
-  }
-
-  // ✅ user authenticated → load dashboard
-  console.log("Admin logged in:", session.user.email);
-});
+const user = await requireAdminSession();
+console.log("Admin logged in:", user.email);

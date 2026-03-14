@@ -1,4 +1,7 @@
 import { supabase } from "./supabaseClient.js";
+import { requireAdminSession } from "./auth-guard.js";
+
+await requireAdminSession();
 
 const nameInput = document.getElementById("categoryName");
 const slugInput = document.getElementById("categorySlug");

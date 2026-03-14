@@ -1,4 +1,7 @@
 import { supabase } from "./supabaseClient.js";
+import { requireAdminSession } from "./auth-guard.js";
+
+await requireAdminSession();
 
 const table=document.getElementById("ordersTable");
 
@@ -86,7 +89,8 @@ const status=document.querySelector(
 await supabase
 .from("orders")
 .update({
-order_status:status
+order_status:status,
+status
 })
 .eq("id",id);
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shoe Museum | Admin Login</title>
+  <title>Exclusive Museum | Admin Login</title>
 
   <link rel="stylesheet" href="./admin.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -12,13 +12,14 @@
 <body class="admin-auth">
 
   <main class="login-box">
-    <h1>Shoe Museum</h1>
+    <h1>Exclusive Museum</h1>
     <p>Admin Login</p>
 
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
 
     <button id="loginBtn">Login</button>
+    <button id="googleLoginBtn" type="button">Continue with Google</button>
 
     <p id="error" class="error"></p>
   </main>
@@ -38,6 +39,19 @@ document.getElementById("loginBtn").onclick = async () => {
     document.getElementById("error").textContent = error.message;
   } else {
     window.location.href = "dashboard.html";
+  }
+};
+
+document.getElementById("googleLoginBtn").onclick = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: new URL("dashboard.html", window.location.href).href
+    }
+  });
+
+  if (error) {
+    document.getElementById("error").textContent = error.message;
   }
 };
 </script>

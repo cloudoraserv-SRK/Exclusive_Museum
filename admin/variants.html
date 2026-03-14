@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Manage Variants | Admin</title>
+  <title>Manage Product Gallery | Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="variants.css">
 </head>
 <body>
 
-<h2>Manage Variants (Colors, Sizes & Stock)</h2>
+<h2>Manage Product Gallery</h2>
 
 <!-- PRODUCT SELECT -->
 <section>
@@ -18,42 +18,39 @@
 
 <hr>
 
-<!-- COLOR MANAGEMENT -->
 <section>
-  <h3>Colors</h3>
+  <h3>Gallery Images</h3>
 
-  <input id="colorInput" placeholder="Add color (e.g. brown)">
-  <button id="addColorBtn">Add Color</button>
+  <p class="muted">
+    Current schema does not include per-color or per-size variant tables.
+    Use this page to manage product gallery images.
+  </p>
+  <input id="imageFiles" type="file" multiple>
+  <button id="addColorBtn">Upload Images</button>
 
   <ul id="colorList"></ul>
 </section>
 
 <hr>
 
-<!-- SIZE & STOCK -->
 <section>
-  <h3>Sizes & Stock</h3>
+  <h3>Gallery List</h3>
 
   <p id="selectedColorNote" class="muted">
-    Select a color to manage sizes
+    Select a product to view its gallery.
   </p>
 
   <table>
     <thead>
       <tr>
-        <th>Size</th>
-        <th>Stock</th>
-        <th>Status</th>
+        <th>#</th>
+        <th>Preview</th>
+        <th>Source</th>
         <th>Action</th>
       </tr>
     </thead>
     <tbody id="variantsTable"></tbody>
   </table>
-
-  <h4>Add / Edit Size</h4>
-  <input type="text" id="sizeInput" placeholder="Size (e.g. 40)">
-  <input type="number" id="stockInput" placeholder="Stock">
-  <button id="saveSizeBtn">Save</button>
 </section>
 
 <script type="module" src="variants.js"></script>

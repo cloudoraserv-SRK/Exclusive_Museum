@@ -1,159 +1,136 @@
-import { supabase } from './supabaseClient.js';
+import { supabase } from "./supabaseClient.js";
+import { requireAdminSession } from "./auth-guard.js";
+
+await requireAdminSession();
 
 const qs = new URLSearchParams(location.search);
-let productId = qs.get('product_id');
+let productId = qs.get("product_id");
 
-let currentVariantId = null;
-let editId = null;
+const productSelect = document.getElementById("productSelect");
+const imageFiles = document.getElementById("imageFiles");
+const uploadBtn = document.getElementById("addColorBtn");
+const galleryList = document.getElementById("colorList");
+const table = document.getElementById("variantsTable");
+const note = document.getElementById("selectedColorNote");
 
-/* ELEMENTS */
-const productSelect = document.getElementById('productSelect');
-const colorInput = document.getElementById('colorInput');
-const addColorBtn = document.getElementById('addColorBtn');
-const colorList = document.getElementById('colorList');
+let currentImages = [];
 
-const table = document.getElementById('variantsTable');
-const sizeInput = document.getElementById('sizeInput');
-const stockInput = document.getElementById('stockInput');
-const saveSizeBtn = document.getElementById('saveSizeBtn');
-const note = document.getElementById('selectedColorNote');
+function safeArray(value) {
+  return Array.isArray(value) ? value.filter(Boolean) : [];
+}
 
-/* ================= PRODUCTS ================= */
+function toPublicUrl(path) {
+  if (!path) return "assets/images/placeholder.png";
+  if (/^https?:\/\//i.test(path)) return path;
+
+  return supabase.storage
+    .from("product-images")
+    .getPublicUrl(path).data.publicUrl;
+}
+
+async function saveGallery() {
+  await supabase
+    .from("products")
+    .update({
+      images: currentImages,
+      gallery_urls: currentImages,
+      thumbnail_url: currentImages[0] ? toPublicUrl(currentImages[0]) : null
+    })
+    .eq("id", productId);
+}
+
 async function loadProducts() {
-  const { data } = await supabase
-    .from('products')
-    .select('id,name')
-    .order('name');
+  const { data = [] } = await supabase
+    .from("products")
+    .select("id,name")
+    .order("name");
 
-  productSelect.innerHTML = data.map(p =>
-    `<option value="${p.id}">${p.name}</option>`
-  ).join('');
+  productSelect.innerHTML = data.map(product => `
+    <option value="${product.id}">${product.name}</option>
+  `).join("");
 
-  if (!productId) productId = data[0]?.id;
-  productSelect.value = productId;
+  if (!productId) productId = data[0]?.id || null;
+  productSelect.value = productId || "";
 
-  loadColors();
+  if (productId) {
+    await loadGallery();
+  }
 }
 
-productSelect.onchange = () => {
-  productId = productSelect.value;
-  currentVariantId = null;
-  colorList.innerHTML = '';
-  table.innerHTML = '';
-  loadColors();
-};
-
-/* ================= COLORS ================= */
-async function loadColors() {
+async function loadGallery() {
   const { data } = await supabase
-    .from('product_variants')
-    .select('id,color_name')
-    .eq('product_id', productId)
-    .order('color_name');
+    .from("products")
+    .select("name,images,gallery_urls")
+    .eq("id", productId)
+    .single();
 
-  colorList.innerHTML = data.map(v => `
-    <li>
-      <button data-id="${v.id}" class="color-btn">${v.color_name}</button>
-      <button data-del="${v.id}">✕</button>
-    </li>
-  `).join('');
+  currentImages = safeArray(data?.images).length ? safeArray(data.images) : safeArray(data?.gallery_urls);
 
-  document.querySelectorAll('.color-btn').forEach(btn => {
-    btn.onclick = () => {
-      currentVariantId = btn.dataset.id;
-      note.textContent = `Managing sizes for color: ${btn.innerText}`;
-      loadSizes();
-    };
-  });
+  note.textContent = data?.name
+    ? `Managing gallery for: ${data.name}`
+    : "Select a product to manage its gallery.";
 
-  document.querySelectorAll('[data-del]').forEach(btn => {
-    btn.onclick = () => deleteColor(btn.dataset.del);
-  });
+  galleryList.innerHTML = currentImages.length
+    ? currentImages.map((path, index) => `<li>Image ${index + 1}: ${path}</li>`).join("")
+    : "<li>No gallery images uploaded yet.</li>";
+
+  renderTable();
 }
 
-addColorBtn.onclick = async () => {
-  if (!colorInput.value) return;
-
-  await supabase.from('product_variants').insert({
-    product_id: productId,
-    color_name: colorInput.value.trim(),
-    image_gallery: []
-  });
-
-  colorInput.value = '';
-  loadColors();
-};
-
-async function deleteColor(id) {
-  if (!confirm('Delete color?')) return;
-  await supabase.from('product_variants').delete().eq('id', id);
-  currentVariantId = null;
-  table.innerHTML = '';
-  loadColors();
-}
-
-/* ================= SIZES ================= */
-async function loadSizes() {
-  if (!currentVariantId) return;
-
-  const { data } = await supabase
-    .from('variant_stock')
-    .select('*')
-    .eq('variant_id', currentVariantId)
-    .order('size');
-
-  if (!data.length) {
-    table.innerHTML = `<tr><td colspan="4">No sizes added</td></tr>`;
+function renderTable() {
+  if (!currentImages.length) {
+    table.innerHTML = `<tr><td colspan="4">No images uploaded</td></tr>`;
     return;
   }
 
-  table.innerHTML = data.map(v => `
+  table.innerHTML = currentImages.map((path, index) => `
     <tr>
-      <td>${v.size}</td>
-      <td>${v.stock}</td>
-      <td>${v.stock > 0 ? 'In Stock' : 'Out of Stock'}</td>
-      <td>
-        <button onclick="editSize('${v.id}','${v.size}',${v.stock})">Edit</button>
-        <button onclick="deleteSize('${v.id}')">Delete</button>
-      </td>
+      <td>${index + 1}</td>
+      <td><img src="${toPublicUrl(path)}" alt="Gallery ${index + 1}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;"></td>
+      <td>${path}</td>
+      <td><button data-remove="${index}">Remove</button></td>
     </tr>
-  `).join('');
+  `).join("");
+
+  document.querySelectorAll("[data-remove]").forEach(button => {
+    button.onclick = () => removeImage(Number(button.dataset.remove));
+  });
 }
 
-/* ================= ADD / EDIT SIZE ================= */
-saveSizeBtn.onclick = async () => {
-  if (!currentVariantId) return alert('Select color first');
-  if (!sizeInput.value || stockInput.value === '') return;
+async function removeImage(index) {
+  const path = currentImages[index];
+  if (!confirm("Remove this image?")) return;
 
-  const payload = {
-    variant_id: currentVariantId,
-    size: sizeInput.value,
-    stock: parseInt(stockInput.value)
-  };
-
-  if (editId) {
-    await supabase.from('variant_stock').update(payload).eq('id', editId);
-    editId = null;
-  } else {
-    await supabase.from('variant_stock').insert(payload);
+  if (path && !/^https?:\/\//i.test(path)) {
+    await supabase.storage.from("product-images").remove([path]);
   }
 
-  sizeInput.value = '';
-  stockInput.value = '';
-  loadSizes();
+  currentImages.splice(index, 1);
+  await saveGallery();
+  await loadGallery();
+}
+
+productSelect.onchange = async () => {
+  productId = productSelect.value;
+  await loadGallery();
 };
 
-window.editSize = (id, size, stock) => {
-  editId = id;
-  sizeInput.value = size;
-  stockInput.value = stock;
+uploadBtn.onclick = async () => {
+  const files = [...(imageFiles.files || [])];
+  if (!files.length || !productId) return;
+
+  for (const file of files) {
+    const path = `${productId}/${Date.now()}_${file.name}`;
+    const { error } = await supabase.storage
+      .from("product-images")
+      .upload(path, file, { upsert: true });
+
+    if (!error) currentImages.push(path);
+  }
+
+  await saveGallery();
+  imageFiles.value = "";
+  await loadGallery();
 };
 
-window.deleteSize = async (id) => {
-  if (!confirm('Delete size?')) return;
-  await supabase.from('variant_stock').delete().eq('id', id);
-  loadSizes();
-};
-
-/* INIT */
 loadProducts();

@@ -1,5 +1,8 @@
 import { supabase } from "./supabaseClient.js";
 import * as XLSX from "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm";
+import { requireAdminSession } from "./auth-guard.js";
+
+await requireAdminSession();
 
 /* helpers */
 const toInt = v => Math.round(Number(v) || 0);
@@ -63,7 +66,6 @@ uploadBtn.onclick = async () => {
     try {
       const brand_id = await getIdByName("brands", r.brand);
       const category_id = await getIdByName("categories", r.category);
-      const style_id = await getIdByName("styles", r.style);
 
       const mrp = toInt(r.mrp);
       const price = toInt(r.price);
@@ -76,56 +78,31 @@ uploadBtn.onclick = async () => {
     name: r.name,
     brand_id,
     category_id,
-    style_id,
     mrp,
     price,
+    base_price: price,
     discount,
 short_description: r.short_description || null,
   long_description: r.long_description || null,
-  active: ["1","true","yes"].includes(String(r.active).toLowerCase())
+  active: ["1","true","yes"].includes(String(r.active).toLowerCase()),
+  thumbnail_url: r.thumbnail_url || null
 }, { onConflict: "slug" })
   .select("id")
   .single();
 
       if (pErr) throw pErr;
 
-      for (const color of splitSafe(r.color)) {
-
-const colors = splitSafe(r.color);
-const sizes = splitSafe(r.sizes);
-
-if (colors.length === 0) {
-  // No variants
-  continue;
-}
-
-for (const color of colors) {
-
-  const { data: variant, error: vErr } = await supabase
-    .from("variants")
-    .insert({
-      product_id: product.id,
-      color,
-      image_gallery: []
-    })
-    .select("id")
-    .single();
-
-  if (vErr) throw vErr;
-
-  if (sizes.length > 0) {
-    for (const size of sizes) {
-      await supabase
-        .from("variant_stock")
-        .insert({
-          variant_id: variant.id,
-          size,
-          stock: toInt(r.stock)
-        });
-    }
-  }
-}
-}
+      const gallery = splitSafe(r.images || r.gallery_urls || r.image_urls);
+      if (gallery.length) {
+        await supabase
+          .from("products")
+          .update({
+            images: gallery,
+            gallery_urls: gallery,
+            thumbnail_url: r.thumbnail_url || gallery[0]
+          })
+          .eq("id", product.id);
+      }
 
       log.textContent += `✅ ${r.slug}\n`;
     } catch (e) {

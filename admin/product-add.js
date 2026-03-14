@@ -1,4 +1,7 @@
 import { supabase } from "./supabaseClient.js";
+import { requireAdminSession } from "./auth-guard.js";
+
+await requireAdminSession();
 
 /* ===== ELEMENTS ===== */
 const nameInput = document.getElementById("name");
@@ -12,6 +15,14 @@ const activeInput = document.getElementById("active");
 const brandSelect = document.getElementById("brand");
 const categorySelect = document.getElementById("category");
 const saveBtn = document.getElementById("saveProduct");
+
+nameInput.oninput = () => {
+  slugInput.value = nameInput.value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+};
 
 /* ===== LOAD BRANDS ===== */
 async function loadBrands() {
@@ -54,6 +65,7 @@ saveBtn.onclick = async () => {
     slug: slugInput.value.trim(),
     mrp: Number(mrpInput.value) || null,
     price: Number(priceInput.value) || null,
+    base_price: Number(priceInput.value) || null,
     short_description: shortDescInput.value || null,
     long_description: longDescInput.value || null,
     brand_id: brandSelect.value,
@@ -72,9 +84,8 @@ saveBtn.onclick = async () => {
     return;
   }
 
-  alert("✅ Product created (Base)");
-  
-  // Variant insert logic will go here next step
+  alert("Product created successfully");
+  location.href = `product-edit.html?id=${product.id}`;
 
 };
 

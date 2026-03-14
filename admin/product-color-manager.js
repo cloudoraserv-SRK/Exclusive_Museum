@@ -1,118 +1,80 @@
 import { supabase } from "./supabaseClient.js";
+import { requireAdminSession } from "./auth-guard.js";
+
+await requireAdminSession();
 
 const container = document.getElementById("colorContainer");
 
-async function loadProducts(){
+function getGallery(product) {
+  if (Array.isArray(product.images) && product.images.length) return product.images;
+  if (Array.isArray(product.gallery_urls) && product.gallery_urls.length) return product.gallery_urls;
+  return [];
+}
 
-  const { data: products } = await supabase
+function toPublicUrl(path) {
+  if (!path) return "assets/images/placeholder.png";
+  if (/^https?:\/\//i.test(path)) return path;
+
+  return supabase.storage
+    .from("product-images")
+    .getPublicUrl(path).data.publicUrl;
+}
+
+async function setThumbnail(productId, path) {
+  const { error } = await supabase
     .from("products")
-    .select("id,name");
+    .update({ thumbnail_url: toPublicUrl(path) })
+    .eq("id", productId);
 
-  // 🔹 get all unique available colors
-  const { data: allColorsData } = await supabase
-    .from("product_variants")
-    .select("color_name");
+  if (error) {
+    alert(error.message);
+    return;
+  }
 
-  const availableColors = [
-    ...new Set(
-      (allColorsData || [])
-        .map(c => c.color_name)
-        .filter(Boolean)
-    )
-  ];
+  loadProducts();
+}
 
-  container.innerHTML = "";
+async function loadProducts() {
+  const { data: products = [] } = await supabase
+    .from("products")
+    .select("id,name,thumbnail_url,images,gallery_urls")
+    .order("created_at", { ascending: false });
 
-  for(const p of products){
+  container.innerHTML = `
+    <div class="product-block">
+      <div class="product-title">Media Review</div>
+      <p class="old-color">
+        Variant tables are not present in the current schema, so this page now manages product thumbnails.
+      </p>
+    </div>
+  `;
 
-    const { data: variants } = await supabase
-      .from("product_variants")
-      .select("id,image_gallery,color_name")
-      .eq("product_id", p.id);
+  for (const product of products) {
+    const gallery = getGallery(product);
+    if (!gallery.length) continue;
 
-    if(!variants?.length) continue;
-
-    let html = "";
-
-    for(const v of variants){
-
-      const imgPath = v.image_gallery?.[0];
-      if(!imgPath) continue;
-
-      const img = supabase.storage
-        .from("products")
-        .getPublicUrl(imgPath).data.publicUrl;
-
-      html += `
-        <div class="image-card" data-id="${v.id}">
-          <img src="${img}">
-
-          <div class="old-color">
-            Current: <strong>${v.color_name || "Not Set"}</strong>
-          </div>
-
-          <select class="color-select">
-            <option value="">Select Existing Color</option>
-            ${availableColors.map(c =>
-              `<option value="${c}">${c}</option>`
-            ).join("")}
-          </select>
-
-          <input 
-            type="text"
-            placeholder="Or Add New Color"
-            class="new-color-input"
-          >
-
-          <button class="btn update-btn">Update</button>
+    const cards = gallery.map(path => `
+      <div class="image-card">
+        <img src="${toPublicUrl(path)}" alt="${product.name}">
+        <div class="old-color">
+          ${product.thumbnail_url === toPublicUrl(path) ? "<strong>Current Thumbnail</strong>" : "Gallery Image"}
         </div>
-      `;
-    }
+        <button class="btn update-btn" data-product="${product.id}" data-path="${path}">
+          Set As Thumbnail
+        </button>
+      </div>
+    `).join("");
 
     container.insertAdjacentHTML("beforeend", `
       <div class="product-block">
-        <div class="product-title">${p.name}</div>
-        <div class="image-row">${html}</div>
+        <div class="product-title">${product.name}</div>
+        <div class="image-row">${cards}</div>
       </div>
     `);
   }
 
-  attachEvents();
-}
-
-function attachEvents(){
-
-  document.querySelectorAll(".update-btn").forEach(btn=>{
-    btn.onclick = async () => {
-
-  const card = btn.closest(".image-card");
-  const id = card.dataset.id;
-
-  const selectedColor = card.querySelector(".color-select").value;
-  const newColor = card.querySelector(".new-color-input").value.trim().toLowerCase();
-
-  const finalColor = newColor || selectedColor;
-
-  if(!finalColor){
-    alert("Select or enter a color");
-    return;
-  }
-
-  const { error } = await supabase
-    .from("product_variants")
-    .update({ color_name: finalColor })
-    .eq("id", id);
-
-  if(error){
-    console.log(error);
-    alert("Update failed");
-    return;
-  }
-
-  alert("Color corrected successfully");
-  loadProducts();
-};
-
+  document.querySelectorAll("[data-product]").forEach(button => {
+    button.onclick = () => setThumbnail(button.dataset.product, button.dataset.path);
   });
 }
 
