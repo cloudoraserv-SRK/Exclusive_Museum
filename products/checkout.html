@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-   <title>Exclusive Museum | Luxury Perfumes & Premium Collections</title>
-<meta name="description" content="Exclusive Museum – Luxury Oud Perfumes, Leather Gift Sets & Premium Accessories. Crafted in India. Delivered Worldwide." />
+   <title>Exclusive Museum | Secure Checkout</title>
+<meta name="description" content="Complete your Exclusive Museum order for handcrafted sandalwood watches and premium limited collections." />
 
 <meta property="og:title" content="Exclusive Museum | Luxury Redefined" />
 <meta property="og:description" content="Discover limited edition luxury perfumes and premium collections." />
@@ -39,11 +39,15 @@
   <header class="site-header">
   <nav class="nav">
 
-    <a href="index.html" class="logo">
-      <img src="../assets/images/logo.jpeg" alt="Shoe Museum">
+    <a href="../index.html" class="logo">
+      <img src="../assets/images/logo.jpeg" alt="Exclusive Museum">
      <span>Exclusive Museum</span>
     </a>
-  <a href="products/cart.html" class="cart-link">
+  <a href="./account.html" class="account-link">
+    <span data-account-label>Account</span>
+    <span class="account-state" data-account-state>Guest</span>
+  </a>
+  <a href="./cart.html" class="cart-link">
     <img src="../assets/images/cart.svg" class="cart-icon">
     <span class="cart-count" id="cartCount">0</span>
   </a>
@@ -51,6 +55,7 @@
     <ul class="nav-links">
       <li><a href="../index.html">Home</a></li>
       <li><a href="../products/index.html">Collections</a></li>
+<li><a href="./account.html">Account</a></li>
 <li><a href="../products/track.html">Track Order</a></li>
 <li><a href="#contact">Contact</a></li>
       <li class="cart-item">
@@ -87,6 +92,8 @@
 
 <h2>Customer Details</h2>
 
+<p id="checkoutAccountNote" class="checkout-account-note"></p>
+
 <input id="name" placeholder="Full Name" required>
 
 <input id="email" type="email" placeholder="Email" required>
@@ -122,7 +129,7 @@
 
 <input id="txnId" placeholder="Transaction / Reference ID (after payment)">
 
-</div>
+</section>
 
 <button id="placeOrderBtn" class="place-order">
 Place Order
@@ -148,10 +155,10 @@ Place Order
     <div class="footer-col">
       <h4>Explore</h4>
       <ul>
-        <li><a href="#why">Why Us</a></li>
-        <li><a href="#categories">Categories</a></li>
-        <li><a href="#featured">Products</a></li>
-        <li><a href="./index.html">Shop</a></li>
+        <li><a href="../index.html#about">Story</a></li>
+        <li><a href="../index.html#collection">Collection</a></li>
+        <li><a href="../products/index.html">Shop</a></li>
+        <li><a href="../products/track.html">Track Order</a></li>
       </ul>
     </div>
 
@@ -172,7 +179,7 @@ Place Order
       <h4>Contact</h4>
       <ul class="contact-list">
         <li>📞 <a href="tel:+919532153763">+91 95-32-153-763</a></li>
-        <li>📧 <a href="mailto:hello@secretsanctuary.in">sales@exclusivemuseum.cloud</a></li>
+        <li>📧 <a href="mailto:sales@exclusivemuseum.cloud">sales@exclusivemuseum.cloud</a></li>
         <li>💬 <a href="https://wa.me/919532153763" target="_blank">WhatsApp Us</a></li>
       </ul>
     </div>
@@ -189,6 +196,7 @@ Place Order
 
 <script type="module">
 import { supabase } from "../admin/supabaseClient.js";
+import { getCurrentUser, initAccountSessionSync, updateAccountUI } from "./user-auth.js";
 
 const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
@@ -197,8 +205,76 @@ const orderTotal = document.getElementById("orderTotal");
 
 const paymentSelect = document.getElementById("paymentMethod");
 const paymentBox = document.getElementById("paymentInstructions");
+const checkoutAccountNote = document.getElementById("checkoutAccountNote");
+const placeOrderBtn = document.getElementById("placeOrderBtn");
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const phoneInput = document.getElementById("phone");
+const addressInput = document.getElementById("address");
+const cityInput = document.getElementById("city");
+const zipInput = document.getElementById("zip");
 
 let total = 0;
+let validatedCart = [];
+
+function updateCartCount() {
+  const cartCount = document.getElementById("cartCount");
+  if (cartCount) {
+    cartCount.textContent = cart.reduce((sum, item) => sum + (item.qty || 0), 0);
+  }
+}
+
+function initHeader() {
+  const hamburger = document.getElementById("hamburger");
+  const nav = document.querySelector(".nav-links");
+
+  hamburger?.addEventListener("click", () => {
+    nav?.classList.toggle("active");
+  });
+}
+
+async function prefillSignedInCustomer() {
+  await updateAccountUI();
+  const user = await getCurrentUser();
+
+  if (!user) {
+    if (checkoutAccountNote) {
+      checkoutAccountNote.textContent = "Sign in from your account page to place an order. This checkout is now protected for signed-in customers only so order history and account ownership stay reliable.";
+    }
+    placeOrderBtn.disabled = true;
+    placeOrderBtn.textContent = "Sign In To Continue";
+    return null;
+  }
+
+  const fullName =
+    user.user_metadata?.full_name ||
+    [user.user_metadata?.first_name, user.user_metadata?.last_name].filter(Boolean).join(" ") ||
+    "";
+
+  if (fullName && !nameInput.value.trim()) {
+    nameInput.value = fullName;
+  }
+
+  if (user.email && !emailInput.value.trim()) {
+    emailInput.value = user.email;
+  }
+
+  if (checkoutAccountNote) {
+    checkoutAccountNote.textContent = `Signed in as ${user.email}. Orders placed with this email will appear in your order history automatically.`;
+  }
+
+  placeOrderBtn.disabled = false;
+  placeOrderBtn.textContent = "Place Order";
+
+  return user;
+}
+
+function getImageList(product) {
+  if (Array.isArray(product.images) && product.images.length) return product.images;
+  if (Array.isArray(product.gallery_urls) && product.gallery_urls.length) return product.gallery_urls;
+  if (product.thumbnail_url) return [product.thumbnail_url];
+  return [];
+}
 
 /* ================= CART ================= */
 
@@ -207,8 +283,33 @@ if(cart.length===0){
 orderSummary.innerHTML="<p>Your cart is empty</p>";
 
 }else{
+const productIds=[...new Set(cart.map(item=>item.product_id).filter(Boolean))];
+const { data: products, error: productError } = await supabase
+  .from("products")
+  .select("id,name,price,active,thumbnail_url,images,gallery_urls")
+  .in("id", productIds);
 
-cart.forEach(item=>{
+if(productError){
+  orderSummary.innerHTML="<p>Unable to validate cart right now.</p>";
+}else{
+const productMap=new Map((products||[]).map(product=>[product.id, product]));
+validatedCart = cart
+  .map(item=>{
+    const product = productMap.get(item.product_id);
+    if(!product || !product.active) return null;
+
+    return {
+      product_id: product.id,
+      name: product.name || item.name,
+      price: Number(product.price || 0),
+      qty: Math.max(1, Number(item.qty) || 1),
+      size: item.size || null,
+      image: getImageList(product)[0] || product.thumbnail_url || item.image || null
+    };
+  })
+  .filter(Boolean);
+
+validatedCart.forEach(item=>{
 
 const row=document.createElement("div");
 
@@ -224,6 +325,7 @@ orderSummary.appendChild(row);
 total+=item.price*item.qty;
 
 });
+}
 
 }
 
@@ -298,18 +400,26 @@ paymentBox.innerHTML=html;
 
 });
 
+paymentSelect.dispatchEvent(new Event("change"));
+
 
 /* ================= PLACE ORDER ================= */
 
-document.getElementById("placeOrderBtn").onclick=async()=>{
+placeOrderBtn.onclick=async()=>{
 
-const name=document.getElementById("name").value.trim();
-const email=document.getElementById("email").value.trim();
-const phone=document.getElementById("phone").value.trim();
+const signedInUser = await getCurrentUser();
+if(!signedInUser?.email){
+alert("Please sign in before placing your order.");
+window.location.href="./account.html";
+return;
+}
+const name=nameInput.value.trim();
+const email=signedInUser.email;
+const phone=phoneInput.value.trim();
 
-const address=document.getElementById("address").value.trim();
-const city=document.getElementById("city").value.trim();
-const zip=document.getElementById("zip").value.trim();
+const address=addressInput.value.trim();
+const city=cityInput.value.trim();
+const zip=zipInput.value.trim();
 
 const txnId=document.getElementById("txnId").value.trim();
 
@@ -322,77 +432,49 @@ return;
 
 }
 
-const orderCode="EM-"+Date.now();
-
-/* INSERT ORDER */
-
-const {data,error}=await supabase
-.from("orders")
-.insert({
-
-order_id:orderCode,
-
-customer_name:name,
-
-email:email,
-user_email:email,
-
-phone:phone,
-
-address:address,
-city:city,
-zip:zip,
-
-payment_method:payment,
-payment_reference:txnId,
-
-payment_status:"pending",
-order_status:"payment_in_progress",
-
-total_amount:total
-
-})
-.select()
-.single();
-
-if(error){
-
-alert("Order failed");
-console.error(error);
+if(!validatedCart.length){
+alert("Your cart is empty or contains unavailable products");
 return;
-
 }
 
+placeOrderBtn.disabled=true;
+placeOrderBtn.textContent="Processing...";
 
-/* INSERT ITEMS */
-
-for(const item of cart){
-
-await supabase
-.from("order_items")
-.insert({
-
-order_id:data.id,
-product_id:item.product_id,
-variant_id:item.variant_id,
-
-product_name:item.name,
-
-size:item.size,
-price:item.price,
-qty:item.qty
-
+const { data, error } = await supabase.functions.invoke("create-order", {
+  body: {
+    customer_name: name,
+    phone,
+    address,
+    city,
+    zip,
+    payment_method: payment,
+    payment_reference: txnId,
+    items: validatedCart
+  }
 });
 
+if(error || !data?.success){
+alert(data?.error || error?.message || "Order failed");
+console.error(error || data);
+await prefillSignedInCustomer();
+return;
 }
 
 localStorage.removeItem("cart");
 
-alert("Order placed! Your Order ID: "+orderCode);
+alert("Order placed! Your Order ID: "+data.order_id);
 
-window.location.href="../products/track.html?id="+orderCode;
+window.location.href="../products/track.html?order_id="+encodeURIComponent(data.order_id)+"&phone="+encodeURIComponent(data.phone || phone);
 
 };
+
+initHeader();
+initAccountSessionSync();
+updateCartCount();
+await prefillSignedInCustomer();
+window.addEventListener("account:updated", async () => {
+  await prefillSignedInCustomer();
+});
 </script>
   <!--Start of Tawk.to Script-->
 <script type="text/javascript">

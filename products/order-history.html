@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exclusive Museum | Order History</title>
+  <meta name="description" content="Review your Exclusive Museum order history, payment progress, and handcrafted fulfillment stages.">
+  <link rel="icon" href="../assets/favicon/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../main.css">
+  <link rel="stylesheet" href="./order-history.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a href="../index.html" class="logo">
+        <img src="../assets/images/logo.jpeg" alt="Exclusive Museum">
+        <span>Exclusive Museum</span>
+      </a>
+      <a href="./account.html" class="account-link">
+        <span data-account-label>Account</span>
+        <span class="account-state" data-account-state>Guest</span>
+      </a>
+      <a href="./favorites.html" class="favorites-link">
+        <span>Saved</span>
+        <span class="favorites-count" data-favorites-count>0</span>
+      </a>
+      <a href="./cart.html" class="cart-link">
+        <img src="../assets/images/cart.svg" class="cart-icon" alt="Cart">
+        <span class="cart-count" id="cartCount">0</span>
+      </a>
+      <div class="hamburger" id="hamburger">☰</div>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="./index.html">Collections</a></li>
+        <li><a href="./account.html">Account</a></li>
+        <li><a href="./track.html">Track Order</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="history-page">
+    <section class="history-hero">
+      <span class="history-kicker">Exclusive Museum Records</span>
+      <h1>Your order history, in one place.</h1>
+      <p>Review payment progress, fulfillment stages, and order details for purchases linked to your signed-in email.</p>
+    </section>
+
+    <section class="history-panel">
+      <div class="history-summary">
+        <div>
+          <span class="summary-label">Order Archive</span>
+          <strong id="historyTotal">Checking your orders...</strong>
+        </div>
+        <div class="history-actions">
+          <a href="./track.html" class="secondary-action">Track by Order ID</a>
+          <a href="./index.html" class="primary-action">Browse Collection</a>
+        </div>
+      </div>
+
+      <div id="historyPrompt" class="history-prompt" hidden>
+        <h2>Sign in to view your order history</h2>
+        <p>Your order archive is available for the email connected to your Google account.</p>
+        <a href="./account.html" class="primary-action">Open Account</a>
+      </div>
+
+      <div id="historyEmpty" class="history-empty" hidden>
+        <h2>No orders found yet</h2>
+        <p>When you place an order using your signed-in email, it will appear here with payment and fulfillment updates.</p>
+      </div>
+
+      <div id="historyGrid" class="history-grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer" id="contact">
+    <div class="footer-container footer-grid">
+      <div class="footer-col brand">
+        <h3>Exclusive Museum</h3>
+        <h1>LUXURY COLLECTIONS<br>GLOBAL DELIVERY</h1>
+        <p>Curated premium products crafted for exclusivity.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="../index.html#about">Story</a></li>
+          <li><a href="./index.html">Collection</a></li>
+          <li><a href="./favorites.html">Saved Items</a></li>
+          <li><a href="./track.html">Track Order</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="/products/privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+          <li><a href="/products/terms.html" target="_blank" rel="noopener noreferrer">Terms & Conditions</a></li>
+          <li><a href="/products/shipping.html" target="_blank" rel="noopener noreferrer">Shipping & Returns</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul class="contact-list">
+          <li>📞 <a href="tel:+919532153763">+91 95-32-153-763</a></li>
+          <li>📧 <a href="mailto:sales@exclusivemuseum.cloud">sales@exclusivemuseum.cloud</a></li>
+          <li>💬 <a href="https://wa.me/919532153763" target="_blank" rel="noopener noreferrer">WhatsApp Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Exclusive Museum. All Rights Reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="./order-history.js"></script>
+</body>
+</html>

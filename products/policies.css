@@ -1,0 +1,119 @@
+:root{
+  --policy-bg:#050505;
+  --policy-panel:rgba(255,255,255,.04);
+  --policy-border:rgba(234,216,160,.12);
+  --policy-text:#efe5d0;
+  --policy-muted:#baae95;
+  --policy-accent:#d6b15c;
+}
+
+.policy-page{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top, rgba(214,177,92,.12), transparent 24%),
+    linear-gradient(180deg,#130f0a 0%,#050505 60%);
+  color:var(--policy-text);
+}
+
+.policy-hero{
+  padding:110px 24px 40px;
+  text-align:center;
+}
+
+.policy-kicker{
+  display:inline-block;
+  margin-bottom:16px;
+  font-size:11px;
+  letter-spacing:.35em;
+  text-transform:uppercase;
+  color:var(--policy-accent);
+}
+
+.policy-hero h1{
+  margin-bottom:14px;
+  font-size:clamp(2.4rem,6vw,4.5rem);
+}
+
+.policy-hero p{
+  max-width:700px;
+  margin:0 auto;
+  color:var(--policy-muted);
+}
+
+.policy-shell{
+  width:min(100%, 1080px);
+  margin:0 auto;
+  padding:0 24px 90px;
+}
+
+.policy-card{
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+  border:1px solid var(--policy-border);
+  border-radius:28px;
+  padding:34px;
+  box-shadow:0 24px 80px rgba(0,0,0,.32);
+}
+
+.policy-meta{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:14px;
+  margin-bottom:28px;
+}
+
+.policy-meta div{
+  padding:14px 16px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:16px;
+  color:var(--policy-muted);
+}
+
+.policy-section{
+  padding:24px 0;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+.policy-section:first-of-type{
+  border-top:none;
+  padding-top:0;
+}
+
+.policy-section h2{
+  margin-bottom:12px;
+  font-size:1.35rem;
+}
+
+.policy-section p,
+.policy-section li{
+  color:var(--policy-muted);
+  line-height:1.9;
+}
+
+.policy-section ul{
+  margin:12px 0 0 18px;
+}
+
+.policy-highlight{
+  margin-top:18px;
+  padding:18px 20px;
+  border-radius:18px;
+  border:1px solid rgba(214,177,92,.18);
+  background:linear-gradient(135deg, rgba(214,177,92,.12), rgba(255,255,255,.03));
+  color:var(--policy-text);
+}
+
+@media (max-width: 640px){
+  .policy-hero{
+    padding:92px 18px 28px;
+  }
+
+  .policy-shell{
+    padding:0 16px 60px;
+  }
+
+  .policy-card{
+    padding:24px 20px;
+    border-radius:22px;
+  }
+}

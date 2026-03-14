@@ -1,225 +1,280 @@
 import { supabase } from "../admin/supabaseClient.js";
+import { getNormalizedProductImages } from "../image-utils.js";
 
 const grid = document.getElementById("productsGrid");
+const pageTitle = document.getElementById("collectionTitle");
+const pageLead = document.getElementById("collectionLead");
 
-document.addEventListener("DOMContentLoaded", init);
+let favoritesApi = null;
 
-async function init() {
-  await loadProducts();
+boot();
+
+async function boot() {
+  initHeader();
   updateCartCount();
+  await loadProducts();
+  await initEnhancements();
 }
 
-/* ================= LOAD PRODUCTS ================= */
+function initHeader() {
+  const hamburger = document.getElementById("hamburger");
+  const nav = document.querySelector(".nav-links");
+  hamburger?.addEventListener("click", () => nav?.classList.toggle("active"));
+}
+
+function updateCartCount() {
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const el = document.getElementById("cartCount");
+  if (el) el.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+}
+
+function getImagePath(product) {
+  const images = getNormalizedProductImages(product);
+  return images[0] || product.thumbnail_url || "../assets/images/placeholder.png";
+}
+
+function getImageUrl(path) {
+  if (!path) return "../assets/images/placeholder.png";
+  if (/^https?:\/\//i.test(path)) return path;
+
+  return supabase.storage
+    .from("product-images")
+    .getPublicUrl(path).data.publicUrl;
+}
+
+function normalizeFilterValue(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function getFilterCandidates(entity) {
+  const slug = normalizeFilterValue(entity?.slug || "");
+  const name = normalizeFilterValue(entity?.name || "");
+  const compactName = name.replace(/-+/g, "");
+  const values = new Set([slug, name, compactName].filter(Boolean));
+
+  if (values.has("watch") || values.has("watches") || values.has("gold-diamond-watches")) {
+    values.add("watch");
+    values.add("watches");
+    values.add("gold-diamond-watches");
+  }
+
+  return values;
+}
+
+function matchesFilter(entity, filterValue) {
+  const normalized = normalizeFilterValue(filterValue);
+  if (!normalized) return true;
+
+  const candidates = getFilterCandidates(entity);
+  if (candidates.has(normalized)) return true;
+
+  for (const candidate of candidates) {
+    if (candidate.includes(normalized) || normalized.includes(candidate)) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 async function loadProducts() {
-
-  if (!grid) return;
-
   const params = new URLSearchParams(window.location.search);
-  const categorySlug = params.get("category");
-  const styleSlug = params.get("style");
-  const brandSlug = params.get("brand");
+  const categorySlug = normalizeFilterValue(params.get("category"));
+  const brandSlug = normalizeFilterValue(params.get("brand"));
 
-  let query = supabase
+  const { data, error } = await supabase
     .from("products")
     .select(`
-      id,
-      name,
-      slug,
-      price,
-      mrp,
-      short_description,
-      active,
-      brands:brand_id ( id, name, slug ),
-      styles:style_id ( id, name, slug ),
-      categories:category_id ( id, name, slug ),
-      variants (
-        id,
-        image_gallery,
-        variant_stock (
-          size,
-          stock
-        )
-      )
+      id,name,slug,price,mrp,short_description,long_description,active,limited_edition,luxury_flag,thumbnail_url,images,gallery_urls,
+      brands:brand_id(id,name,slug),
+      categories:category_id(id,name,slug)
     `)
-    .eq("active", true);
-
-  if (brandSlug) query = query.eq("brands.slug", brandSlug);
-  if (categorySlug) query = query.eq("categories.slug", categorySlug);
-  if (styleSlug) query = query.eq("styles.slug", styleSlug);
-
-  const { data, error } = await query.order("created_at", { ascending: false });
+    .eq("active", true)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error(error);
-    grid.innerHTML = "<p>Error loading products</p>";
+    grid.innerHTML = "<p>Unable to load collection right now.</p>";
     return;
   }
 
-  renderProducts(data || []);
+  const products = (data || []).filter(product => {
+    const categoryMatch = !categorySlug || matchesFilter(product.categories, categorySlug);
+    const brandMatch = !brandSlug || matchesFilter(product.brands, brandSlug);
+    return categoryMatch && brandMatch;
+  });
+
+  updateCollectionIntro(products, { brandSlug, categorySlug });
+  renderProducts(products);
 }
 
-/* ================= RENDER PRODUCTS ================= */
+function updateCollectionIntro(products, filters) {
+  if (!pageTitle || !pageLead) return;
+
+  const first = products[0];
+  if (filters.categorySlug && first?.categories?.name) {
+    pageTitle.textContent = first.categories.name;
+    pageLead.textContent = `A focused edit of ${first.categories.name.toLowerCase()} pieces crafted for collectors and gifting.`;
+    return;
+  }
+
+  if (filters.brandSlug && first?.brands?.name) {
+    pageTitle.textContent = first.brands.name;
+    pageLead.textContent = `Explore the ${first.brands.name} collection with premium presentation, crafted details, and limited pieces.`;
+    return;
+  }
+
+  pageTitle.textContent = "Curated Collection";
+  pageLead.textContent = "Discover Exclusive Museum pieces with handcrafted character, premium materials, and collector-led detailing.";
+}
 
 function renderProducts(products) {
-
   grid.innerHTML = "";
 
   if (!products.length) {
-    grid.innerHTML = "<p>No products found</p>";
+    grid.innerHTML = "<p>No products found for this collection.</p>";
     return;
   }
 
-  products.forEach(p => {
-
-    /* IMAGE */
-
-    let imageUrl = "../assets/images/placeholder.png";
-
-    const variant = p.variants?.[0];
-
-    if (variant?.image_gallery?.length) {
-
-      const { data } = supabase.storage
-        .from("product-images")   // ✅ correct bucket
-        .getPublicUrl(variant.image_gallery[0]);
-
-      imageUrl = data.publicUrl;
-
-    }
-
-    /* SIZES */
-
-    let sizes = [];
-
-    p.variants?.forEach(v => {
-      v.variant_stock?.forEach(s => {
-        if (s.stock > 0) sizes.push(s.size);
-      });
-    });
-
-    sizes = [...new Set(sizes)];
+  products.forEach(product => {
+    const imageUrl = getImageUrl(getImagePath(product));
+    const description = product.short_description || product.long_description || "Handcrafted luxury piece from Exclusive Museum.";
+    const badge = product.limited_edition
+      ? "Limited Edition"
+      : product.luxury_flag
+        ? "Luxury Pick"
+        : product.categories?.name || "Curated";
 
     grid.insertAdjacentHTML("beforeend", `
-
-      <div class="product-card">
-
-        <a href="product.html?slug=${p.slug}" class="product-link">
-
-          <img src="${imageUrl}" alt="${p.name}">
-
-          <div class="product-info">
-
-            <h4 class="brand">${p.brands?.name || ""}</h4>
-
-            <h3>${p.name}</h3>
-
-            <div class="price-row">
-
-              ${p.mrp ? `<span class="mrp">$${p.mrp}</span>` : ""}
-
-              <span class="price">$${p.price}</span>
-
-            </div>
-
-            <p class="desc">${p.short_description || ""}</p>
-
+      <article class="product-card">
+        <a href="product.html?id=${encodeURIComponent(product.id)}&slug=${encodeURIComponent(product.slug || "")}" class="product-link">
+          <div class="product-media">
+            <img src="${imageUrl}" alt="${product.name}">
+            <span class="product-badge">${badge}</span>
           </div>
-
+          <div class="product-copy">
+            <p class="brand">${product.brands?.name || "Exclusive Museum"}</p>
+            <h3>${product.name}</h3>
+            <p class="desc">${description}</p>
+            <div class="price-row">
+              ${product.mrp ? `<span class="mrp">$${product.mrp}</span>` : ""}
+              <span class="price">$${product.price ?? "-"}</span>
+            </div>
+          </div>
         </a>
-
-        <select class="size-select">
-
-          <option value="">Select Size</option>
-
-          ${sizes.map(s => `<option value="${s}">${s}</option>`).join("")}
-
-        </select>
-
-        <button class="add-btn"
-
-          data-id="${p.id}"
-
-          data-name="${p.name}"
-
-          data-price="${p.price}"
-
+        <button
+          class="favorite-btn"
+          type="button"
+          data-favorite-button
+          data-id="${product.id}"
+          data-slug="${product.slug}"
+          data-name="${product.name}"
+          data-price="${product.price ?? 0}"
+          data-image="${imageUrl}"
+          data-brand="${product.brands?.name || "Exclusive Museum"}"
+          data-description="${description.replace(/"/g, "&quot;")}"
         >
-
-          Add to Cart
-
+          <span class="favorite-icon">+</span>
+          <span data-favorite-label>Save</span>
         </button>
-
-      </div>
-
+        <button
+          class="add-btn"
+          data-id="${product.id}"
+          data-name="${product.name}"
+          data-price="${product.price ?? 0}"
+          data-image="${imageUrl}"
+        >
+          Add to Cart
+        </button>
+      </article>
     `);
-
   });
 
   initCartButtons();
+  initFavoriteButtons();
 }
-
-/* ================= CART ================= */
 
 function initCartButtons() {
+  document.querySelectorAll(".add-btn").forEach(button => {
+    button.onclick = () => {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const productId = button.dataset.id;
+      const existing = cart.find(item => item.product_id === productId);
 
-  document.querySelectorAll(".add-btn").forEach(btn => {
-
-    btn.onclick = () => {
-
-      const card = btn.closest(".product-card");
-
-      const size = card.querySelector(".size-select").value;
-
-      if (!size) {
-        alert("Select size first");
-        return;
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({
+          product_id: productId,
+          name: button.dataset.name,
+          price: Number(button.dataset.price),
+          image: button.dataset.image,
+          qty: 1
+        });
       }
 
-      const id = btn.dataset.id;
-      const name = btn.dataset.name;
-      const price = Number(btn.dataset.price);
-
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-      const existing = cart.find(i => i.id === id && i.size === size);
-
-      if (existing) existing.qty++;
-
-      else cart.push({
-        product_id:id,
-        name,
-        price,
-        size,
-        qty:1
-      });
-
       localStorage.setItem("cart", JSON.stringify(cart));
-
       updateCartCount();
-
       alert("Added to cart");
-
     };
-
   });
-
 }
 
-/* ================= CART COUNT ================= */
+function initFavoriteButtons() {
+  document.querySelectorAll("[data-favorite-button]").forEach(button => {
+    const product = {
+      id: button.dataset.id,
+      slug: button.dataset.slug,
+      name: button.dataset.name,
+      price: button.dataset.price,
+      image: button.dataset.image,
+      brand: button.dataset.brand,
+      description: button.dataset.description
+    };
 
-function updateCartCount() {
+    const active = favoritesApi?.isFavorite ? favoritesApi.isFavorite(product.id) : false;
+    applyFavoriteState(button, active);
 
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    button.onclick = event => {
+      event.preventDefault();
+      if (!favoritesApi?.toggleFavorite) return;
+      const saved = favoritesApi.toggleFavorite(product);
+      applyFavoriteState(button, saved);
+    };
+  });
+}
 
-  const el = document.getElementById("cartCount");
+function applyFavoriteState(button, active) {
+  button.classList.toggle("is-active", active);
+  button.setAttribute("aria-pressed", active ? "true" : "false");
+  const label = button.querySelector("[data-favorite-label]");
+  const icon = button.querySelector(".favorite-icon");
+  if (label) label.textContent = active ? "Saved" : "Save";
+  if (icon) icon.textContent = active ? "✓" : "+";
+}
 
-  if (el) {
+async function initEnhancements() {
+  try {
+    const [{ initAccountSessionSync, updateAccountUI }, favoritesModule] = await Promise.all([
+      import("./user-auth.js"),
+      import("./favorites.js")
+    ]);
 
-    const count = cart.reduce((a,b)=>a + b.qty,0);
+    favoritesApi = {
+      isFavorite: favoritesModule.isFavorite,
+      toggleFavorite: favoritesModule.toggleFavorite
+    };
 
-    el.textContent = count;
-
+    initAccountSessionSync();
+    await updateAccountUI();
+    favoritesModule.updateFavoritesCount();
+    window.addEventListener("favorites:updated", favoritesModule.updateFavoritesCount);
+    initFavoriteButtons();
+  } catch (error) {
+    console.warn("Optional account/wishlist enhancements unavailable", error);
   }
-
 }

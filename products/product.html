@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-   <title>Exclusive Museum | Luxury Perfumes & Premium Collections</title>
-<meta name="description" content="Exclusive Museum – Luxury Oud Perfumes, Leather Gift Sets & Premium Accessories. Crafted in India. Delivered Worldwide." />
+   <title>Exclusive Museum | Product Detail</title>
+<meta name="description" content="View product details, gallery, materials, and handcrafted specifications for Exclusive Museum pieces." />
 
 <meta property="og:title" content="Exclusive Museum | Luxury Redefined" />
 <meta property="og:description" content="Discover limited edition luxury perfumes and premium collections." />
@@ -19,9 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./cart.css" />
   <link rel="stylesheet" href="./product.css" />
-    <link rel="stylesheet" href="./style.css" />
   <link rel="stylesheet" href="../main.css"/>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -41,9 +39,17 @@
   <nav class="nav">
 
     <a href="index.html" class="logo">
-      <img src="../assets/images/logo.jpeg" alt="Shoe Museum">
+      <img src="../assets/images/logo.jpeg" alt="Exclusive Museum">
      <span>Exclusive Museum</span>
     </a>
+  <a href="./account.html" class="account-link">
+    <span data-account-label>Account</span>
+    <span class="account-state" data-account-state>Guest</span>
+  </a>
+  <a href="./favorites.html" class="favorites-link">
+    <span>Saved</span>
+    <span class="favorites-count" data-favorites-count>0</span>
+  </a>
   <a href="../products/cart.html" class="cart-link">
     <img src="../assets/images/cart.svg" class="cart-icon">
     <span class="cart-count" id="cartCount">0</span>
@@ -52,6 +58,8 @@
     <ul class="nav-links">
       <li><a href="../index.html">Home</a></li>
       <li><a href="../products/index.html">Collections</a></li>
+<li><a href="./account.html">Account</a></li>
+<li><a href="./favorites.html">Saved Items</a></li>
 <li><a href="../products/track.html">Track Order</a></li>
 <li><a href="#contact">Contact</a></li>
       <li class="cart-item">
@@ -59,23 +67,25 @@
     </ul>
   </nav>  
 </header>
-<!-- ================= PRODUCT PAGE ================= -->
+<!-- ================= PRODUCT PAGE ================= --><!-- PRODUCT -->
 <main class="lux-product">
 
 <div class="lux-grid">
 
 <!-- LEFT GALLERY -->
+
 <section class="lux-gallery">
 
 <div id="galleryMain" class="lux-main-image"></div>
 
 <div id="thumbs" class="lux-thumbs"></div>
 
-<div class="lux-badge">Limited Edition – 500 Couples</div>
-
 </section>
 
+
+
 <!-- RIGHT PRODUCT INFO -->
+
 <section class="lux-info">
 
 <div id="productBrand" class="lux-brand"></div>
@@ -84,11 +94,10 @@
 
 <p id="productDesc" class="lux-short"></p>
 
-<div class="lux-emotion">
-Two watches. One moment. One memory.
-</div>
+
 
 <!-- PRODUCT META -->
+
 <div class="product-meta">
 
 <div>
@@ -97,17 +106,17 @@ Two watches. One moment. One memory.
 
 <div>
 <span>Status</span>
-<strong id="stockStatus">Made To Order</strong>
+<strong id="stockStatus">In Stock</strong>
 </div>
 
 <div>
-<span>Crafting Time</span>
+<span>Delivery</span>
 <strong id="deliveryTime">30-45 Days</strong>
 </div>
 
 <div>
 <span>Shipping</span>
-<strong id="shippingInfo">Worldwide Shipping</strong>
+<strong id="shippingInfo">Free International Shipping</strong>
 </div>
 
 <div>
@@ -117,115 +126,100 @@ Two watches. One moment. One memory.
 
 </div>
 
+
+
 <!-- PRICE -->
+
 <div class="lux-price">
+
 <span id="productMrp" class="mrp"></span>
+
 <span id="productPrice" class="price"></span>
-</div>
-
-<!-- TRUST BADGES -->
-<div class="lux-trust">
-
-<div>✔ Handcrafted After Order</div>
-<div>✔ Limited Edition</div>
-<div>✔ Crafting Video Included</div>
-<div>✔ Secure Worldwide Shipping</div>
 
 </div>
+
+
 
 <div class="lux-pay-banner">
-Pay via Gift Card / Crypto / Wire Transfer  
+
+Pay via Gift Card / Crypto / wire transfer 
 <strong>Get 40% OFF on offer price</strong>
+
 </div>
 
+
+
+
 <!-- COLOR OPTIONS -->
+
 <div id="colorsBlock" class="lux-option">
+
 <h4>Color</h4>
+
 <div id="colors" class="color-list"></div>
+
 </div>
 
 <!-- SIZE OPTIONS -->
+
 <div id="sizesBlock" class="lux-option">
+
 <h4>Size</h4>
+
 <div id="sizes" class="size-list"></div>
+
 </div>
 
+
 <button id="addToCartBtn" class="lux-btn">
+
 Add to Cart
+
+</button>
+
+<button id="favoriteBtn" class="favorite-cta" type="button" aria-pressed="false">
+  <span class="favorite-cta-icon">+</span>
+  <span data-favorite-label>Save</span>
 </button>
 
 <!-- PAYMENT ICONS -->
+
 <div class="payment-icons">
+
 <img src="../assets/payments/visa.svg">
 <img src="../assets/payments/mastercard.svg">
 <img src="../assets/payments/paypal.svg">
 <img src="../assets/payments/bitcoin.svg">
-</div>
-
-</section>
-</div>
-
-<!-- ================= STORY ================= -->
-
-<section class="lux-story">
-
-<h2>The Sandalwood Story</h2>
-
-<p>
-Crafted from natural Indian sandalwood, each watch carries a subtle
-fragrance that lasts for years. The wood slowly releases its aroma,
-making every piece uniquely personal.
-</p>
-
-<p>
-Every watch is individually handcrafted by artisans and assembled
-with precision watchmaking components.
-</p>
-
-</section>
-
-
-<!-- ================= CRAFTING PROCESS ================= -->
-
-<section class="lux-crafting">
-
-<h2>Crafted Just For You</h2>
-
-<p>
-Every order begins the crafting process. The watch is carved,
-assembled and finished individually for the buyer.
-</p>
-
-<p>
-A professional video of the crafting process is recorded and
-delivered exclusively to the buyer as proof of authenticity.
-</p>
-
-<div class="craft-steps">
-
-<div>Wood Selection</div>
-<div>Hand Carving</div>
-<div>Movement Assembly</div>
-<div>Finishing & Polishing</div>
-<div>Final Quality Check</div>
 
 </div>
 
-</section>
+<div class="lux-impact-row">
+  <div class="impact-pill">Rare sandalwood body</div>
+  <div class="impact-pill">Crafting video included</div>
+  <div class="impact-pill">Collector edition release</div>
+</div>
 
+<div class="product-description">
+    <h2>Product Description</h2>
+    
+    <div id="seoDescription">
+        <!-- Supabase se description yaha load hoga -->
+    </div>
+</div>
 
-<!-- ================= SPECIFICATIONS ================= -->
+<!-- SPECIFICATIONS -->
 
 <section class="lux-specs">
 
-<h2>Specifications</h2>
+<h2>Product Specifications</h2>
 
 <div id="specGrid" class="spec-grid"></div>
 
 </section>
 
 
-<!-- ================= MATERIALS ================= -->
+
+<!-- MATERIALS -->
 
 <section class="lux-materials">
 
@@ -236,30 +230,8 @@ delivered exclusively to the buyer as proof of authenticity.
 </section>
 
 
-<!-- ================= GIFT SECTION ================= -->
 
-<section class="lux-gift">
-
-<h2>A Meaningful Gift</h2>
-
-<p>
-The Sandalwood Couple Watch is designed as a timeless gift
-for moments that matter.
-</p>
-
-<ul>
-
-<li>Anniversary Gift</li>
-<li>Wedding Gift</li>
-<li>Engagement Gift</li>
-<li>Valentine Gift</li>
-
-</ul>
-
-</section>
-
-
-<!-- ================= CUSTOMIZATION ================= -->
+<!-- CUSTOMIZATION -->
 
 <section class="lux-custom">
 
@@ -270,21 +242,26 @@ for moments that matter.
 </section>
 
 
-<!-- ================= LIMITED EDITION ================= -->
 
-<section class="lux-limited">
+<!-- STORY -->
 
-<h2>Limited Edition</h2>
+<section class="lux-story">
 
-<p>
-Only 500 couple watches will ever be crafted in this design.
-Once the edition is completed, the design will be permanently discontinued.
+<h2>Crafted from Rare Indian Red Sandalwood</h2>
+
+<p id="storyText">
+
+Each watch is handcrafted from a single piece of rare Indian red sandalwood.
+Master artisans shape every component before gold and diamond detailing
+is applied by traditional jewellers.
+
 </p>
 
 </section>
 
 
-<!-- ================= DESCRIPTION ================= -->
+
+<!-- DESCRIPTION -->
 
 <section class="lux-description">
 
@@ -295,7 +272,8 @@ Once the edition is completed, the design will be permanently discontinued.
 </section>
 
 
-<!-- ================= REVIEWS ================= -->
+
+<!-- REVIEWS -->
 
 <section class="reviews-section">
 
@@ -308,7 +286,8 @@ Once the edition is completed, the design will be permanently discontinued.
 </section>
 
 
-<!-- ================= FAQ ================= -->
+
+<!-- FAQ -->
 
 <section class="faq-section">
 
@@ -319,6 +298,7 @@ Once the edition is completed, the design will be permanently discontinued.
 </section>
 
 </main>
+
 <!-- ================= RELATED PRODUCTS ================= -->
 <section class="related-section">
   <h2>You may also like</h2>
@@ -347,9 +327,10 @@ Once the edition is completed, the design will be permanently discontinued.
     <div class="footer-col">
       <h4>Explore</h4>
       <ul>
-        <li><a href="#why">Why Us</a></li>
-        <li><a href="#categories">Categories</a></li>
-        <li><a href="#featured">Products</a></li>
+        <li><a href="../index.html#about">Story</a></li>
+        <li><a href="../index.html#collection">Collection</a></li>
+        <li><a href="./favorites.html">Saved Items</a></li>
+        <li><a href="./track.html">Track Order</a></li>
         <li><a href="./index.html">Shop</a></li>
       </ul>
     </div>
@@ -372,7 +353,7 @@ Once the edition is completed, the design will be permanently discontinued.
       <h4>Contact</h4>
       <ul class="contact-list">
         <li>📞 <a href="tel:+919532153763">+91 95-32-153-763</a></li>
-        <li>📧 <a href="mailto:hello@secretsanctuary.in">sales@exclusivemuseum.cloud</a></li>
+        <li>📧 <a href="mailto:sales@exclusivemuseum.cloud">sales@exclusivemuseum.cloud</a></li>
         <li>💬 <a href="https://wa.me/919532153763" target="_blank">WhatsApp Us</a></li>
       </ul>
     </div>
@@ -382,9 +363,7 @@ Once the edition is completed, the design will be permanently discontinued.
   <span>© 2026 Exclusive Museum. All Rights Reserved.</span>
   </div>
 </footer>
-<script type="module" src="../script.js"></script>
 <script type="module" src="./product.js"></script>
-<script type="module" src="./related-product.js"></script>
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
@@ -400,3 +379,19 @@ s0.parentNode.insertBefore(s1,s0);
 <!--End of Tawk.to Script-->
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

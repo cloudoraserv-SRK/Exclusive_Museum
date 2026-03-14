@@ -1,0 +1,274 @@
+.account-link,
+.favorites-link{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  border:1px solid rgba(214,177,92,.16);
+  border-radius:999px;
+  background:rgba(255,255,255,.03);
+  color:#f6ecd8;
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+
+.account-link{
+  margin-left:auto;
+}
+
+.account-state,
+.favorites-count{
+  min-width:24px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(214,177,92,.18);
+  color:var(--gold);
+  text-align:center;
+}
+
+.history-page{
+  max-width:1320px;
+  margin:0 auto;
+  padding:96px 24px 88px;
+}
+
+.history-hero,
+.history-panel,
+.history-card{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:30px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  box-shadow:0 24px 80px rgba(0,0,0,.28);
+}
+
+.history-hero{
+  margin-bottom:28px;
+  padding:42px;
+  background:
+    radial-gradient(circle at top right, rgba(214,177,92,.14), transparent 30%),
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+}
+
+.history-kicker,
+.summary-label,
+.detail-label{
+  display:inline-block;
+  margin-bottom:12px;
+  font-size:11px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--gold);
+}
+
+.history-hero h1{
+  margin-bottom:12px;
+  font-size:clamp(2.2rem,4vw,4rem);
+}
+
+.history-hero p,
+.history-card p,
+.history-empty p,
+.history-prompt p{
+  color:#c9bca3;
+}
+
+.history-panel{
+  padding:32px;
+}
+
+.history-summary{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:center;
+  margin-bottom:24px;
+}
+
+.history-summary strong{
+  display:block;
+  font-size:1.4rem;
+  color:#f4ead7;
+}
+
+.history-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.primary-action,
+.secondary-action{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:180px;
+  padding:15px 18px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+
+.primary-action{
+  border:none;
+  background:linear-gradient(135deg,#e1c984,#b98d31);
+  color:#090909;
+}
+
+.secondary-action{
+  border:1px solid rgba(214,177,92,.18);
+  background:rgba(255,255,255,.03);
+  color:#f3e8d3;
+}
+
+.history-grid{
+  display:grid;
+  gap:20px;
+}
+
+.history-card{
+  padding:28px;
+}
+
+.history-top{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-start;
+  margin-bottom:22px;
+}
+
+.history-top h2{
+  margin-bottom:8px;
+  font-size:1.6rem;
+}
+
+.history-sub{
+  color:#bcae92;
+}
+
+.status-stack{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:flex-end;
+}
+
+.status-pill{
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid rgba(214,177,92,.18);
+  background:rgba(255,255,255,.03);
+  color:#eadfc8;
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.status-pill.success{
+  color:#9ae3b0;
+  border-color:rgba(154,227,176,.25);
+}
+
+.status-pill.pending{
+  color:#efc669;
+  border-color:rgba(239,198,105,.24);
+}
+
+.status-pill.failed{
+  color:#ff9d9d;
+  border-color:rgba(255,157,157,.24);
+}
+
+.history-meta{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.history-meta div,
+.history-item{
+  padding:18px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+}
+
+.history-meta span{
+  display:block;
+  margin-bottom:6px;
+  font-size:11px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:#aa9d85;
+}
+
+.history-meta strong{
+  color:#f4ead7;
+}
+
+.history-items{
+  display:grid;
+  gap:12px;
+}
+
+.history-item{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  align-items:flex-start;
+}
+
+.history-item strong{
+  display:block;
+  color:#f5ecda;
+}
+
+.history-item small{
+  display:block;
+  margin-top:6px;
+  color:#bcae92;
+}
+
+.history-price{
+  color:#fff4db;
+  font-weight:700;
+}
+
+.history-empty,
+.history-prompt{
+  padding:48px 18px 24px;
+  text-align:center;
+}
+
+.history-empty h2,
+.history-prompt h2{
+  margin-bottom:10px;
+}
+
+@media (max-width: 768px){
+  .history-page{
+    padding:88px 16px 64px;
+  }
+
+  .history-hero,
+  .history-panel,
+  .history-card{
+    padding:24px;
+    border-radius:24px;
+  }
+
+  .history-summary,
+  .history-top,
+  .history-item{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .account-link{
+    margin-left:0;
+  }
+}

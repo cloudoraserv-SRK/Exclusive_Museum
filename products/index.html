@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-   <title>Exclusive Museum | Luxury Perfumes & Premium Collections</title>
-<meta name="description" content="Exclusive Museum – Luxury Oud Perfumes, Leather Gift Sets & Premium Accessories. Crafted in India. Delivered Worldwide." />
+   <title>Exclusive Museum | Curated Collection</title>
+<meta name="description" content="Explore Exclusive Museum's premium collection of handcrafted watches, collector pieces, and gifting icons." />
 
 <meta property="og:title" content="Exclusive Museum | Luxury Redefined" />
 <meta property="og:description" content="Discover limited edition luxury perfumes and premium collections." />
@@ -18,6 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="./index.css" />
   <link rel="stylesheet" href="../main.css"/>
 </head>
@@ -38,9 +39,17 @@
   <nav class="nav">
 
     <a href="index.html" class="logo">
-      <img src="../assets/images/logo.jpeg" alt="Shoe Museum">
+      <img src="../assets/images/logo.jpeg" alt="Exclusive Museum">
      <span>Exclusive Museum</span>
     </a>
+  <a href="./account.html" class="account-link">
+    <span data-account-label>Account</span>
+    <span class="account-state" data-account-state>Guest</span>
+  </a>
+  <a href="./favorites.html" class="favorites-link">
+    <span>Saved</span>
+    <span class="favorites-count" data-favorites-count>0</span>
+  </a>
   <a href="../products/cart.html" class="cart-link">
     <img src="../assets/images/cart.svg" class="cart-icon">
     <span class="cart-count" id="cartCount">0</span>
@@ -49,6 +58,8 @@
     <ul class="nav-links">
       <li><a href="../index.html">Home</a></li>
       <li><a href="../products/index.html">Collections</a></li>
+<li><a href="./account.html">Account</a></li>
+<li><a href="./favorites.html">Saved Items</a></li>
 <li><a href="../products/track.html">Track Order</a></li>
 <li><a href="#contact">Contact</a></li>
       <li class="cart-item">
@@ -58,7 +69,11 @@
 </header>
 <!-- ================= All Shoes  ================= -->
 <main class="product-list-page">
-  <h1>All Items</h1>
+  <section class="collection-hero">
+    <span class="collection-kicker">Exclusive Museum</span>
+    <h1 id="collectionTitle">Curated Collection</h1>
+    <p id="collectionLead">Discover Exclusive Museum pieces with handcrafted character, premium materials, and collector-led detailing.</p>
+  </section>
   <div id="productsGrid" class="products-grid"></div>
 </main>
 <!-- ================= FOOTER ================= -->
@@ -78,9 +93,10 @@
     <div class="footer-col">
       <h4>Explore</h4>
       <ul>
-        <li><a href="#why">Why Us</a></li>
-        <li><a href="#categories">Categories</a></li>
-        <li><a href="#featured">Products</a></li>
+        <li><a href="../index.html#about">Story</a></li>
+        <li><a href="../index.html#collection">Collection</a></li>
+        <li><a href="./favorites.html">Saved Items</a></li>
+        <li><a href="./track.html">Track Order</a></li>
         <li><a href="./index.html">Shop</a></li>
       </ul>
     </div>
@@ -102,7 +118,7 @@
       <h4>Contact</h4>
       <ul class="contact-list">
         <li>📞 <a href="tel:+919532153763">+91 95-32-153-763</a></li>
-        <li>📧 <a href="mailto:hello@secretsanctuary.in">sales@exclusivemuseum.cloud</a></li>
+        <li>📧 <a href="mailto:sales@exclusivemuseum.cloud">sales@exclusivemuseum.cloud</a></li>
         <li>💬 <a href="https://wa.me/919532153763" target="_blank">WhatsApp Us</a></li>
       </ul>
     </div>
@@ -114,7 +130,6 @@
 
 </footer>
 <script type="module" src="./index.js"></script>
-<script src="../filters.js"></script>
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();

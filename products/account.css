@@ -1,0 +1,182 @@
+.account-link,
+.favorites-link{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  border:1px solid rgba(214,177,92,.16);
+  border-radius:999px;
+  background:rgba(255,255,255,.03);
+  color:#f6ecd8;
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+
+.account-link{
+  margin-left:auto;
+}
+
+.account-state,
+.favorites-count{
+  min-width:24px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(214,177,92,.18);
+  color:var(--gold);
+  text-align:center;
+}
+
+.account-page{
+  max-width:1320px;
+  margin:0 auto;
+  padding:96px 24px 88px;
+}
+
+.account-hero,
+.account-card,
+.benefits-card{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:30px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  box-shadow:0 24px 80px rgba(0,0,0,.28);
+}
+
+.account-hero{
+  margin-bottom:28px;
+  padding:42px;
+  background:
+    radial-gradient(circle at top right, rgba(214,177,92,.14), transparent 30%),
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+}
+
+.account-kicker,
+.summary-label{
+  display:inline-block;
+  margin-bottom:12px;
+  font-size:11px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--gold);
+}
+
+.account-hero h1{
+  margin-bottom:12px;
+  font-size:clamp(2.2rem,4vw,4rem);
+}
+
+.account-hero p,
+.account-card p,
+.benefits-card p{
+  color:#c9bca3;
+}
+
+.account-panel{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(320px,.86fr);
+  gap:24px;
+}
+
+.account-card,
+.benefits-card{
+  padding:34px;
+}
+
+.account-card h2{
+  margin-bottom:12px;
+}
+
+.account-meta{
+  display:grid;
+  gap:12px;
+  margin:24px 0;
+}
+
+.account-meta div,
+.benefit-list article{
+  padding:18px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+}
+
+.account-meta span{
+  display:block;
+  margin-bottom:6px;
+  font-size:11px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:#aa9d85;
+}
+
+.account-meta strong,
+.benefit-list strong{
+  color:#f4ead7;
+}
+
+.account-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:8px;
+}
+
+.primary-action,
+.secondary-action{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:180px;
+  padding:15px 18px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  cursor:pointer;
+}
+
+.primary-action{
+  border:none;
+  background:linear-gradient(135deg,#e1c984,#b98d31);
+  color:#090909;
+}
+
+.secondary-action{
+  border:1px solid rgba(214,177,92,.18);
+  background:rgba(255,255,255,.03);
+  color:#f3e8d3;
+}
+
+.account-message{
+  min-height:24px;
+  margin-top:16px;
+}
+
+.benefit-list{
+  display:grid;
+  gap:14px;
+}
+
+@media (max-width: 900px){
+  .account-panel{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width: 768px){
+  .account-page{
+    padding:88px 16px 64px;
+  }
+
+  .account-hero,
+  .account-card,
+  .benefits-card{
+    padding:24px;
+    border-radius:24px;
+  }
+
+  .account-link{
+    margin-left:0;
+  }
+}

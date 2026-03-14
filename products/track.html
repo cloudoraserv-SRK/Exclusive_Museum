@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-   <title>Exclusive Museum | Luxury Perfumes & Premium Collections</title>
-<meta name="description" content="Exclusive Museum – Luxury Oud Perfumes, Leather Gift Sets & Premium Accessories. Crafted in India. Delivered Worldwide." />
+  <title>Exclusive Museum | Track Your Order</title>
+  <meta name="description" content="Track your Exclusive Museum order using your Order ID and phone number." />
 
-<meta property="og:title" content="Exclusive Museum | Luxury Redefined" />
-<meta property="og:description" content="Discover limited edition luxury perfumes and premium collections." />
-<meta property="og:image" content="assets/og/home.jpg" />
+  <meta property="og:title" content="Exclusive Museum | Track Your Order" />
+  <meta property="og:description" content="Check the latest payment and fulfillment status for your Exclusive Museum order." />
+  <meta property="og:image" content="assets/og/home.jpg" />
 
   <!-- Favicon -->
   <link rel="icon" href="../assets/favicon/favicon.ico" />
@@ -18,7 +18,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./index.css" />
+
+  <link rel="stylesheet" href="./checkout.css" />
   <link rel="stylesheet" href="../main.css"/>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -33,114 +34,236 @@
 <body>
 
 <!-- ================= HEADER ================= -->
-
-  <header class="site-header">
+<header class="site-header">
   <nav class="nav">
-
-    <a href="index.html" class="logo">
-      <img src="../assets/images/logo.jpeg" alt="Shoe Museum">
-     <span>Exclusive Museum</span>
+<a href="index.html" class="logo">
+      <img src="../assets/images/logo.jpeg" alt="Exclusive Museum">
+      <span>Exclusive Museum</span>
     </a>
-  <a href="../products/cart.html" class="cart-link">
-    <img src="../assets/images/cart.svg" class="cart-icon">
-    <span class="cart-count" id="cartCount">0</span>
-  </a>
-<div class="hamburger" id="hamburger">☰</div>
-    <ul class="nav-links">
+   <div class="hamburger" id="hamburger">☰</div>
+       <ul class="nav-links">
       <li><a href="../index.html">Home</a></li>
-      <li><a href="../products/index.html">Collections</a></li>
-<li><a href="../products/track.html">Track Order</a></li>
-<li><a href="#contact">Contact</a></li>
+      <li><a href="./index.html">Collections</a></li>
+      <li><a href="./track.html">Track Order</a></li>
+      <li><a href="#contact">Contact</a></li>
       <li class="cart-item">
-</li>
+      </li>
     </ul>
-  </nav>  
+  </nav>
+
 </header>
   
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f9;
-  margin: 0;
-  padding: 0;
+.track-page {
+  min-height: calc(100vh - 80px);
+  padding: 80px 24px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top, rgba(198,168,74,.16), transparent 30%),
+    linear-gradient(180deg, #090909 0%, #050505 100%);
 }
 
-.container {
-  max-width: 500px;
-  margin: 60px auto;
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+.track-shell {
+  width: min(100%, 1100px);
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 30px;
+  align-items: stretch;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.track-panel,
+.track-card {
+  background: linear-gradient(180deg, rgba(20,20,20,.96), rgba(10,10,10,.92));
+  border: 1px solid rgba(198,168,74,.18);
+  border-radius: 28px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.45);
 }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  font-size: 14px;
+.track-panel {
+  padding: 42px;
+  position: relative;
+  overflow: hidden;
 }
 
-button {
-  width: 100%;
-  padding: 12px;
-  background: black;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
+.track-panel::before {
+  content: "";
+  position: absolute;
+  inset: auto -80px -100px auto;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(198,168,74,.22), transparent 70%);
+  filter: blur(8px);
 }
 
-button:hover {
-  background: #222;
-}
-
-.result {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 8px;
-  background: #f9fafb;
-  font-size: 14px;
-}
-
-.success { color: green; font-weight: bold; }
-.pending { color: orange; font-weight: bold; }
-.failed { color: red; font-weight: bold; }
-
-.track-btn {
-  margin-top: 12px;
+.eyebrow {
   display: inline-block;
-  padding: 10px 15px;
-  background: #2563eb;
-  color: white;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 13px;
+  margin-bottom: 18px;
+  font-size: 11px;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.track-panel h1 {
+  margin-bottom: 18px;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+}
+
+.track-panel p {
+  max-width: 480px;
+}
+
+.track-highlights {
+  margin-top: 32px;
+  display: grid;
+  gap: 14px;
+}
+
+.track-highlights div {
+  padding: 14px 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+  color: #d5d5d5;
+}
+
+.track-card {
+  padding: 34px;
+}
+
+.track-card h2 {
+  margin-bottom: 10px;
+}
+
+.track-form {
+  display: grid;
+  gap: 14px;
+}
+
+.track-form label {
+  font-size: 12px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #b8b8b8;
+}
+
+.track-form input {
+  width: 100%;
+  padding: 15px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(198,168,74,.2);
+  background: rgba(255,255,255,.03);
+  color: #fff;
+  font-size: 14px;
+}
+
+.track-form input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(198,168,74,.22);
+}
+
+#trackBtn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #dbc36e, #b79033);
+  color: #090909;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#status {
+  display: none;
+  margin-top: 22px;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(198,168,74,.18);
+  background: rgba(255,255,255,.03);
+  color: #ededed;
+  line-height: 1.9;
+}
+
+.success {
+  color: #86d996;
+  font-weight: 600;
+}
+
+.pending {
+  color: #efc669;
+  font-weight: 600;
+}
+
+.failed {
+  color: #ff8b8b;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .track-shell {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .track-page {
+    padding: 42px 16px 24px;
+  }
+
+  .track-panel,
+  .track-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
 }
 </style>
-</head>
 
-<body>
+<main class="track-page">
+  <div class="track-shell">
+    <section class="track-panel">
+      <span class="eyebrow">Order Concierge</span>
+      <h1>Track your handcrafted order.</h1>
+      <p>
+        Enter your order ID and phone number to check payment progress, production stage,
+        and delivery updates for your Exclusive Museum purchase.
+      </p>
 
-<div class="container">
+      <div class="track-highlights">
+        <div>Payment verification updates after manual review.</div>
+        <div>Production stages reflect handcrafted watch fulfillment.</div>
+        <div>Need help? Reach us quickly on WhatsApp for assisted support.</div>
+      </div>
+    </section>
 
-  <h2>Track Your Order</h2>
+    <section class="track-card">
+      <h2>Track Order</h2>
+      <p>Use the same phone number you entered during checkout.</p>
 
-  <input id="orderId" placeholder="Enter Order ID">
-  <input id="phone" placeholder="Enter Mobile Number">
-  <button id="trackBtn">Track Order</button>
+      <div class="track-form">
+        <div>
+          <label for="orderId">Order ID</label>
+          <input id="orderId" placeholder="Example: EM-1741939200000">
+        </div>
 
-  <div id="status" class="result" style="display:none;"></div>
+        <div>
+          <label for="phone">Phone Number</label>
+          <input id="phone" placeholder="Enter mobile number">
+        </div>
 
-</div>
+        <button id="trackBtn">Track Order</button>
+      </div>
+
+      <div id="status"></div>
+    </section>
+  </div>
+</main>
 
 <!-- ================= FOOTER ================= -->
 <footer class="footer" id="contact">
@@ -159,10 +282,10 @@ button:hover {
     <div class="footer-col">
       <h4>Explore</h4>
       <ul>
-        <li><a href="#why">Why Us</a></li>
-        <li><a href="#categories">Categories</a></li>
-        <li><a href="#featured">Products</a></li>
+        <li><a href="../index.html#about">Story</a></li>
+        <li><a href="../index.html#collection">Collection</a></li>
         <li><a href="./index.html">Shop</a></li>
+        <li><a href="./track.html">Track Order</a></li>
       </ul>
     </div>
 
@@ -182,7 +305,7 @@ button:hover {
       <h4>Contact</h4>
       <ul class="contact-list">
         <li>📞 <a href="tel:+919532153763">+91 95-32-153-763</a></li>
-        <li>📧 <a href="mailto:hello@secretsanctuary.in">sales@exclusivemuseum.cloud</a></li>
+        <li>📧 <a href="mailto:sales@exclusivemuseum.cloud">sales@exclusivemuseum.cloud</a></li>
         <li>💬 <a href="https://wa.me/919532153763" target="_blank">WhatsApp Us</a></li>
       </ul>
     </div>
@@ -192,82 +315,7 @@ button:hover {
   <span>© 2026 Exclusive Museum. All Rights Reserved.</span>
   </div>
 </footer>
-<script>
-
-const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4ZHVsa2FyYWJxemR3Zmpja2lzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDc5ODQsImV4cCI6MjA4MzgyMzk4NH0.LlWNzi9-ys6UdEqdlwe82FZ-lQTGAGKCml5cfCEt9j0";
-
-document.getElementById("trackBtn").addEventListener("click", async () => {
-
-  const orderId = document.getElementById("orderId").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const statusBox = document.getElementById("status");
-
-  if (!orderId || !email) {
-    statusBox.style.display = "block";
-    statusBox.innerText = "Please enter Order ID and Email";
-    return;
-  }
-
-  statusBox.style.display = "block";
-  statusBox.innerText = "Checking order...";
-
-  try {
-
-    const res = await fetch(
-  `https://vxdulkarabqzdwfjckis.supabase.co/rest/v1/orders?order_id=eq.${orderId}&customer_phone=eq.${phone}`,
-  {
-    headers: {
-      "apikey": ANON_KEY,
-      "Authorization": "Bearer " + ANON_KEY
-    }
-  }
-);
-
-    const data = await res.json();
-
-    if (!data.length) {
-      statusBox.innerHTML = "Order not found ❌";
-      return;
-    }
-
-    const order = data[0];
-
-    let paymentClass = "pending";
-    if (order.payment_status === "success") paymentClass = "success";
-    if (order.payment_status === "failed") paymentClass = "failed";
-
-    let shipmentInfo = "";
-
-    if (order.tracking_id) {
-      shipmentInfo = `
-        <br><strong>Tracking ID:</strong> ${order.tracking_id}
-        <br><strong>Courier:</strong> ${order.courier_name || "Delhivery"}
-        <br>
-        <a class="track-btn" target="_blank"
-        href="https://www.delhivery.com/track/package/${order.tracking_id}">
-        Track on Delhivery
-        </a>
-      `;
-    } else {
-      shipmentInfo = "<br>Shipment not yet created.";
-    }
-
-    statusBox.innerHTML = `
-      <strong>Order ID:</strong> ${order.order_id} <br>
-      <strong>Amount:</strong> ₹${order.amount} <br>
-      <strong>Payment Status:</strong>
-      <span class="${paymentClass}">${order.payment_status || order.status}</span>
-      <br>
-      <strong>Shipment Status:</strong> ${order.shipment_status || "Not Shipped"}
-      ${shipmentInfo}
-    `;
-
-  } catch (err) {
-    statusBox.innerText = "Error checking order";
-  }
-
-});
-</script>
+<script type="module" src="./track.js"></script>
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();

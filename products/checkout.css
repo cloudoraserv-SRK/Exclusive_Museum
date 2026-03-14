@@ -30,17 +30,17 @@ BOX STYLE
 ================================= */
 
 .checkout-box{
-background:#0f0f0f;
-border:1px solid #1e1e1e;
+background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+border:1px solid rgba(198,168,74,.14);
 padding:35px;
-border-radius:14px;
-box-shadow:0 20px 60px rgba(0,0,0,.6);
+border-radius:24px;
+box-shadow:0 24px 70px rgba(0,0,0,.4);
 transition:.35s;
 }
 
 .checkout-box:hover{
 transform:translateY(-4px);
-box-shadow:0 30px 70px rgba(0,0,0,.8);
+box-shadow:0 30px 80px rgba(0,0,0,.52);
 }
 
 /* ===============================
@@ -51,7 +51,18 @@ HEADINGS
 font-size:22px;
 margin-bottom:25px;
 letter-spacing:.5px;
-color:#fff;
+color:var(--ivory);
+}
+
+.checkout-account-note{
+margin:-8px 0 18px;
+padding:14px 16px;
+border:1px solid rgba(198,168,74,.14);
+border-radius:16px;
+background:rgba(255,255,255,.03);
+color:#d7cab0;
+font-size:13px;
+line-height:1.8;
 }
 
 /* ===============================
@@ -64,9 +75,9 @@ INPUTS
 width:100%;
 margin-bottom:16px;
 padding:14px;
-border-radius:8px;
-border:1px solid #1e1e1e;
-background:#111;
+border-radius:16px;
+border:1px solid rgba(198,168,74,.12);
+background:rgba(7,7,7,.55);
 color:#fff;
 font-size:14px;
 transition:.25s;
@@ -74,7 +85,7 @@ transition:.25s;
 
 .checkout-box input::placeholder,
 .checkout-box textarea::placeholder{
-color:#888;
+color:#a99d89;
 }
 
 .checkout-box input:focus,
@@ -82,7 +93,7 @@ color:#888;
 .checkout-box select:focus{
 outline:none;
 border-color:#d4af37;
-box-shadow:0 0 0 1px rgba(212,175,55,.25);
+box-shadow:0 0 0 1px rgba(212,175,55,.25), 0 0 24px rgba(212,175,55,.08);
 }
 
 .checkout-box textarea{
@@ -122,20 +133,30 @@ PLACE ORDER BUTTON
 width:100%;
 padding:16px;
 margin-top:20px;
-background:linear-gradient(135deg,#d4af37,#b8963b);
+background:linear-gradient(135deg,#e2cb87,#b58d31);
 border:none;
-border-radius:8px;
-color:#000;
+border-radius:999px;
+color:#070707;
 font-size:16px;
 font-weight:600;
-letter-spacing:.5px;
+letter-spacing:.18em;
+text-transform:uppercase;
 cursor:pointer;
 transition:.35s;
 }
 
 .place-order:hover{
 transform:translateY(-3px);
-box-shadow:0 20px 50px rgba(212,175,55,.35);
+box-shadow:0 20px 50px rgba(212,175,55,.3);
+}
+
+.place-order:disabled{
+cursor:not-allowed;
+opacity:.58;
+transform:none;
+box-shadow:none;
+background:linear-gradient(135deg,#7e745c,#5a5243);
+color:#f3ead6;
 }
 
 /* ===============================
@@ -245,11 +266,10 @@ font-size:18px;
 }
 
 .payment-info{
-
-background:#111;
-border:1px solid #333;
+background:rgba(255,255,255,.03);
+border:1px solid rgba(198,168,74,.14);
 padding:15px;
-border-radius:6px;
+border-radius:16px;
 margin-top:15px;
 font-size:14px;
 
