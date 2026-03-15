@@ -1,5 +1,6 @@
 import { getFavoriteCount, getWishlistSyncMode, updateFavoritesCount } from "./favorites.js";
 import { initAccountSessionSync, signInWithGoogle, signOutUser, updateAccountUI } from "./user-auth.js";
+import { initLocaleExperience } from "../locale.js";
 
 const accountHeading = document.getElementById("accountHeading");
 const accountLead = document.getElementById("accountLead");
@@ -83,6 +84,7 @@ async function renderAccount() {
 async function init() {
   initHeader();
   updateCartCount();
+  initLocaleExperience();
   initAccountSessionSync();
   updateFavoritesCount();
   await renderAccount();

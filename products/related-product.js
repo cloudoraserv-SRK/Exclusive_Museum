@@ -1,6 +1,7 @@
 import { supabase } from "../admin/supabaseClient.js";
 import { getNormalizedProductImages } from "../image-utils.js";
 import { buildFavoriteProduct, isFavorite, syncFavoriteButton, toggleFavorite } from "./favorites.js";
+import { formatMoney, t } from "../locale.js";
 
 const relatedGrid = document.getElementById("relatedGrid");
 const loadMoreBtn = document.getElementById("loadMoreRelated");
@@ -92,7 +93,7 @@ if (relatedGrid && slug) {
           data-description="${(product.short_description || "Premium collector piece.").replace(/"/g, "&quot;")}"
         >
           <span class="favorite-icon">+</span>
-          <span data-favorite-label>Save</span>
+          <span data-favorite-label>${t("save")}</span>
         </button>
         <img src="${getImageUrl(getImagePath(product))}" alt="${product.name}">
         <div class="card-body">
@@ -100,7 +101,7 @@ if (relatedGrid && slug) {
           <h4>${product.name}</h4>
           <p class="category">${product.categories?.name || "Curated"}</p>
           <p class="desc">${product.short_description || "Premium collector piece."}</p>
-          <span class="price">$${product.price ?? "-"}</span>
+          <span class="price">${formatMoney(product.price ?? 0)}</span>
         </div>
       </article>
     `);

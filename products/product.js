@@ -1,5 +1,6 @@
 import { supabase } from "../admin/supabaseClient.js";
 import { getNormalizedProductImages } from "../image-utils.js";
+import { formatMoney, initLocaleExperience, t } from "../locale.js";
 
 const params = new URLSearchParams(location.search);
 const slug = params.get("slug");
@@ -45,11 +46,21 @@ window.addEventListener("load", () => {
   }
 });
 
+window.addEventListener("em:locale-changed", () => {
+  if (!productRecord) return;
+  productPrice.textContent = formatMoney(productRecord.price ?? 0);
+  productMrp.textContent = productRecord.mrp ? formatMoney(productRecord.mrp) : "";
+  if (favoritesApi) {
+    applyFavoriteState(favoritesApi.isFavorite(productRecord.id));
+  }
+});
+
 async function boot() {
   if (bootStarted) return;
   bootStarted = true;
   initHeader();
   updateCartCount();
+  initLocaleExperience();
   await loadProduct();
   initCartAction();
   await initEnhancements();
@@ -224,9 +235,7 @@ async function loadProduct() {
   }
 
   const selectFields = `
-    id,name,slug,price,mrp,short_description,long_description,description,case_size,movement,glass,water_resistance,crafting_time,active,thumbnail_url,images,gallery_urls,
-    brands:brand_id(name),
-    categories:category_id(name)
+    id,name,slug,price,mrp,short_description,long_description,description,case_size,movement,glass,water_resistance,crafting_time,active,thumbnail_url,images,gallery_urls,brand_id,category_id
   `;
 
   let data = null;
@@ -278,14 +287,25 @@ async function loadProduct() {
     throw error || new Error("Product not found");
   }
 
+  const [brandResponse, categoryResponse] = await Promise.all([
+    data.brand_id
+      ? supabase.from("brands").select("name").eq("id", data.brand_id).maybeSingle()
+      : Promise.resolve({ data: null }),
+    data.category_id
+      ? supabase.from("categories").select("name").eq("id", data.category_id).maybeSingle()
+      : Promise.resolve({ data: null })
+  ]);
+
   productRecord = data;
+  productRecord.brand_name = brandResponse.data?.name || null;
+  productRecord.category_name = categoryResponse.data?.name || null;
   currentImages = getImageList(data);
 
   productName.textContent = data.name || "";
   productDesc.textContent = data.short_description || data.description || "";
-  productPrice.textContent = `$${data.price ?? "-"}`;
-  productMrp.textContent = data.mrp ? `$${data.mrp}` : "";
-  productBrand.textContent = data.brands?.name || "Exclusive Museum";
+  productPrice.textContent = formatMoney(data.price ?? 0);
+  productMrp.textContent = data.mrp ? formatMoney(data.mrp) : "";
+  productBrand.textContent = productRecord.brand_name || "Exclusive Museum";
   longDesc.textContent = data.long_description || data.description || "A premium Exclusive Museum piece crafted with collector-level detail.";
   productSku.textContent = data.slug || data.id;
   stockStatus.textContent = data.active ? "Available" : "Unavailable";
@@ -323,7 +343,7 @@ function initCartAction() {
 
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
-    alert("Added to cart");
+    alert(t("addToCart"));
   });
 }
 
@@ -336,7 +356,7 @@ function applyFavoriteState(active) {
   const label = favoriteBtn.querySelector("[data-favorite-label]");
   const icon = favoriteBtn.querySelector(".favorite-cta-icon");
 
-  if (label) label.textContent = active ? "Saved" : "Save";
+  if (label) label.textContent = t(active ? "savedState" : "save");
   if (icon) icon.textContent = active ? "✓" : "+";
 }
 
@@ -352,7 +372,7 @@ function wireFavoriteAction() {
       name: productRecord.name,
       price: productRecord.price,
       image: getImageUrl(currentImages[0]),
-      brand: productRecord.brands?.name,
+      brand: productRecord.brand_name || "Exclusive Museum",
       description: productRecord.short_description || productRecord.description
     });
 

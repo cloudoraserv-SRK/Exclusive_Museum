@@ -1,6 +1,7 @@
 import { supabase } from "../admin/supabaseClient.js";
 import { updateFavoritesCount } from "./favorites.js";
 import { getCurrentUser, initAccountSessionSync, updateAccountUI } from "./user-auth.js";
+import { formatDateTime, formatMoney, initLocaleExperience, t } from "../locale.js";
 
 const historyGrid = document.getElementById("historyGrid");
 const historyEmpty = document.getElementById("historyEmpty");
@@ -47,13 +48,7 @@ function formatStatusLabel(status) {
 
 function formatDate(value) {
   if (!value) return "Not available";
-  return new Date(value).toLocaleString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
-  });
+  return formatDateTime(value);
 }
 
 function renderItems(items = []) {
@@ -69,7 +64,7 @@ function renderItems(items = []) {
           <strong>${item.product_name || "Exclusive Museum Piece"}</strong>
           <small>Qty ${quantity}${item.size ? ` • ${item.size}` : ""}</small>
         </div>
-        <span class="history-price">$${Number(item.price || 0).toFixed(2)}</span>
+        <span class="history-price">${formatMoney(item.price || 0)}</span>
       </div>
     `;
   }).join("");
@@ -98,19 +93,19 @@ function renderOrders(orders) {
 
         <div class="history-meta">
           <div>
-            <span>Total</span>
-            <strong>$${Number(order.total_amount || 0).toFixed(2)}</strong>
+            <span>${t("total")}</span>
+            <strong>${formatMoney(order.total_amount || 0)}</strong>
           </div>
           <div>
-            <span>Payment Method</span>
+            <span>${t("paymentMethod")}</span>
             <strong>${formatStatusLabel(order.payment_method || "manual review")}</strong>
           </div>
           <div>
-            <span>Delivery City</span>
+            <span>${t("deliveryCity")}</span>
             <strong>${order.city || order.country || "Not provided"}</strong>
           </div>
           <div>
-            <span>Address</span>
+            <span>${t("address")}</span>
             <strong>${order.address || "Available in checkout record"}</strong>
           </div>
         </div>
@@ -171,6 +166,7 @@ async function loadOrderHistory() {
 async function init() {
   initHeader();
   updateCartCount();
+  initLocaleExperience();
   initAccountSessionSync();
   updateFavoritesCount();
   await updateAccountUI();
@@ -180,6 +176,7 @@ async function init() {
     await updateAccountUI();
     await loadOrderHistory();
   });
+  window.addEventListener("em:locale-changed", loadOrderHistory);
 }
 
 function handleHistoryError(error) {

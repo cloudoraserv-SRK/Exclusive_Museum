@@ -1,5 +1,6 @@
 import { supabase } from "../admin/supabaseClient.js";
 import { hydrateFavoritesForIdentity, setFavoritesIdentity } from "./favorites.js";
+import { t } from "../locale.js";
 
 let authListenerInitialized = false;
 let cachedUser = undefined;
@@ -59,7 +60,7 @@ async function applyAccountIdentity(user) {
 
 export async function updateAccountUI() {
   const user = await getCurrentUser();
-  const label = user?.user_metadata?.full_name?.split(" ")[0] || user?.email?.split("@")[0] || "Account";
+  const label = user?.user_metadata?.full_name?.split(" ")[0] || user?.email?.split("@")[0] || t("account");
 
   await applyAccountIdentity(user);
 
@@ -68,7 +69,7 @@ export async function updateAccountUI() {
   });
 
   document.querySelectorAll("[data-account-state]").forEach(element => {
-    element.textContent = user ? "Signed In" : "Guest";
+    element.textContent = user ? "Signed In" : t("guest");
   });
 
   return user;
@@ -84,14 +85,14 @@ export function initAccountSessionSync() {
 
     const label = session?.user?.user_metadata?.full_name?.split(" ")[0]
       || session?.user?.email?.split("@")[0]
-      || "Account";
+      || t("account");
 
     document.querySelectorAll("[data-account-label]").forEach(element => {
       element.textContent = label;
     });
 
     document.querySelectorAll("[data-account-state]").forEach(element => {
-      element.textContent = session?.user ? "Signed In" : "Guest";
+      element.textContent = session?.user ? "Signed In" : t("guest");
     });
 
     window.dispatchEvent(new CustomEvent("account:updated", {

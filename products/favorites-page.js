@@ -1,5 +1,6 @@
 import { getFavorites, toggleFavorite, updateFavoritesCount } from "./favorites.js";
 import { initAccountSessionSync, updateAccountUI } from "./user-auth.js";
+import { formatMoney, initLocaleExperience } from "../locale.js";
 
 const favoritesGrid = document.getElementById("favoritesGrid");
 const favoritesEmpty = document.getElementById("favoritesEmpty");
@@ -26,6 +27,7 @@ function initHeader() {
 function init() {
   initHeader();
   updateCartCount();
+  initLocaleExperience();
   initAccountSessionSync();
   updateFavoritesCount();
   updateAccountUI();
@@ -33,6 +35,7 @@ function init() {
     updateFavoritesCount();
     renderFavorites();
   });
+  window.addEventListener("em:locale-changed", renderFavorites);
   renderFavorites();
 }
 
@@ -61,7 +64,7 @@ function renderFavorites() {
           <h3>${item.name}</h3>
           <p>${item.description || "Collector-grade handcrafted piece."}</p>
           <div class="favorite-footer">
-            <span class="favorite-price">$${item.price ?? "-"}</span>
+            <span class="favorite-price">${formatMoney(item.price ?? 0)}</span>
           </div>
           <div class="favorite-actions">
             <a class="favorite-action" href="./product.html?id=${encodeURIComponent(item.id)}&slug=${encodeURIComponent(item.slug || "")}">View Piece</a>

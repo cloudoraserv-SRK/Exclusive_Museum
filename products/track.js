@@ -1,4 +1,5 @@
 import { supabase } from "../admin/supabaseClient.js";
+import { formatDateTime, formatMoney, initLocaleExperience } from "../locale.js";
 
 const trackBtn = document.getElementById("trackBtn");
 const orderIdInput = document.getElementById("orderId");
@@ -25,6 +26,8 @@ function formatStatusLabel(status) {
 const params = new URLSearchParams(window.location.search);
 orderIdInput.value = params.get("order_id") || "";
 phoneInput.value = params.get("phone") || "";
+
+initLocaleExperience();
 
 hamburger?.addEventListener("click", () => {
   navLinks?.classList.toggle("active");
@@ -57,20 +60,12 @@ trackBtn?.addEventListener("click", async () => {
 
   const order = data.order;
   const tone = statusToneMap[order.order_status] || "pending";
-  const createdAt = order.created_at
-    ? new Date(order.created_at).toLocaleString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit"
-      })
-    : "Not available";
+  const createdAt = order.created_at ? formatDateTime(order.created_at) : "Not available";
 
   statusBox.innerHTML = `
     <strong>Order ID:</strong> ${order.order_id}<br>
     <strong>Name:</strong> ${order.customer_name}<br>
-    <strong>Total:</strong> $${Number(order.total_amount || 0).toFixed(2)}<br>
+    <strong>Total:</strong> ${formatMoney(order.total_amount || 0)}<br>
     <strong>Placed:</strong> ${createdAt}<br>
     <strong>Payment:</strong> ${formatStatusLabel(order.payment_status)}<br>
     <strong>Order Status:</strong> <span class="${tone}">${formatStatusLabel(order.order_status)}</span>

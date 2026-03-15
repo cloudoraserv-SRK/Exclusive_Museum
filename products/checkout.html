@@ -58,8 +58,6 @@
 <li><a href="./account.html">Account</a></li>
 <li><a href="../products/track.html">Track Order</a></li>
 <li><a href="#contact">Contact</a></li>
-      <li class="cart-item">
-</li>
     </ul>
   </nav>  
 </header>
@@ -197,6 +195,7 @@ Place Order
 <script type="module">
 import { supabase } from "../admin/supabaseClient.js";
 import { getCurrentUser, initAccountSessionSync, updateAccountUI } from "./user-auth.js";
+import { formatMoney, initLocaleExperience, t } from "../locale.js";
 
 const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
@@ -213,9 +212,15 @@ const phoneInput = document.getElementById("phone");
 const addressInput = document.getElementById("address");
 const cityInput = document.getElementById("city");
 const zipInput = document.getElementById("zip");
+const summaryHeading = document.querySelector(".checkout-box h2");
+const totalLabel = document.querySelector(".total span");
 
 let total = 0;
 let validatedCart = [];
+
+initLocaleExperience();
+if (summaryHeading) summaryHeading.textContent = "Order Summary";
+if (totalLabel) totalLabel.textContent = t("total");
 
 function updateCartCount() {
   const cartCount = document.getElementById("cartCount");
@@ -280,7 +285,7 @@ function getImageList(product) {
 
 if(cart.length===0){
 
-orderSummary.innerHTML="<p>Your cart is empty</p>";
+orderSummary.innerHTML=`<p>${t("emptyCart")}</p>`;
 
 }else{
 const productIds=[...new Set(cart.map(item=>item.product_id).filter(Boolean))];
@@ -317,7 +322,7 @@ row.className="order-row";
 
 row.innerHTML=`
 <span>${item.name} × ${item.qty}</span>
-<span>$${item.price*item.qty}</span>
+<span>${formatMoney(item.price * item.qty)}</span>
 `;
 
 orderSummary.appendChild(row);
@@ -329,7 +334,7 @@ total+=item.price*item.qty;
 
 }
 
-orderTotal.textContent="$"+total;
+orderTotal.textContent=formatMoney(total);
 
 
 /* ================= PAYMENT INFO ================= */
@@ -472,6 +477,21 @@ initHeader();
 initAccountSessionSync();
 updateCartCount();
 await prefillSignedInCustomer();
+window.addEventListener("em:locale-changed", () => {
+  if (summaryHeading) summaryHeading.textContent = "Order Summary";
+  if (totalLabel) totalLabel.textContent = t("total");
+  orderTotal.textContent = formatMoney(total);
+  orderSummary.innerHTML = "";
+  validatedCart.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "order-row";
+    row.innerHTML = `
+      <span>${item.name} × ${item.qty}</span>
+      <span>${formatMoney(item.price * item.qty)}</span>
+    `;
+    orderSummary.appendChild(row);
+  });
+});
 window.addEventListener("account:updated", async () => {
   await prefillSignedInCustomer();
 });

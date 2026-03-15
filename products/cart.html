@@ -52,8 +52,6 @@
       <li><a href="../products/index.html">Collections</a></li>
 <li><a href="../products/track.html">Track Order</a></li>
 <li><a href="#contact">Contact</a></li>
-      <li class="cart-item">
-</li>
     </ul>
   </nav>  
 </header>
@@ -68,7 +66,7 @@
     <div class="cart-summary">
       <div class="total-row">
         <span>Total</span>
-        <strong id="cartTotal">₹0</strong>
+        <strong id="cartTotal">$0</strong>
       </div>
 
       <a href="./checkout.html" class="checkout-btn">
@@ -133,11 +131,18 @@
 <script type="module" src="../script.js"></script>
 <!-- ================= JS ================= -->
 <script type="module">
+import { formatMoney, initLocaleExperience, t } from "../locale.js";
+
 const itemsEl = document.getElementById("cartItems");
 const totalEl = document.getElementById("cartTotal");
 const countEl = document.getElementById("cartCount");
+const headingEl = document.querySelector(".cart-container h1");
+const totalLabelEl = document.querySelector(".total-row span");
+const checkoutBtn = document.querySelector(".checkout-btn");
 
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+initLocaleExperience();
 
 /* ================= RENDER CART ================= */
 
@@ -154,17 +159,17 @@ itemsEl.innerHTML=`
 
 <div class="empty-cart">
 
-<h2>Your cart is empty 🛒</h2>
+<h2>${t("emptyCart")} 🛒</h2>
 
-<p>Add something amazing to get started</p>
+<p>${t("addSomethingAmazing")}</p>
 
-<a href="../index.html" class="shop-btn">Continue Shopping</a>
+<a href="../index.html" class="shop-btn">${t("continueShopping")}</a>
 
 </div>
 
 `;
 
-totalEl.textContent="$0";
+totalEl.textContent=formatMoney(0);
 
 if(countEl) countEl.textContent="0";
 
@@ -205,7 +210,7 @@ onerror="this.src='../assets/images/placeholder.png'">
 
 <div class="price-row">
 
-$${item.price*item.qty}
+${formatMoney(item.price * item.qty)}
 
 </div>
 
@@ -223,7 +228,7 @@ $${item.price*item.qty}
 
 });
 
-totalEl.textContent="$"+total;
+totalEl.textContent=formatMoney(total);
 
 if(countEl) countEl.textContent=count;
 
@@ -273,7 +278,11 @@ renderCart();
 
 /* ================= INIT ================= */
 
+if (headingEl) headingEl.textContent = t("yourExclusiveCart");
+if (totalLabelEl) totalLabelEl.textContent = t("total");
+if (checkoutBtn) checkoutBtn.textContent = t("proceedToCheckout");
 renderCart();
+window.addEventListener("em:locale-changed", renderCart);
 
 
 </script>

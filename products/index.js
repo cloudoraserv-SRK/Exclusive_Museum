@@ -1,5 +1,6 @@
 import { supabase } from "../admin/supabaseClient.js";
 import { getNormalizedProductImages } from "../image-utils.js";
+import { formatMoney, initLocaleExperience, t } from "../locale.js";
 
 const grid = document.getElementById("productsGrid");
 const pageTitle = document.getElementById("collectionTitle");
@@ -8,10 +9,14 @@ const pageLead = document.getElementById("collectionLead");
 let favoritesApi = null;
 
 boot();
+window.addEventListener("em:locale-changed", () => {
+  loadProducts();
+});
 
 async function boot() {
   initHeader();
   updateCartCount();
+  initLocaleExperience();
   await loadProducts();
   await initEnhancements();
 }
@@ -161,8 +166,8 @@ function renderProducts(products) {
             <h3>${product.name}</h3>
             <p class="desc">${description}</p>
             <div class="price-row">
-              ${product.mrp ? `<span class="mrp">$${product.mrp}</span>` : ""}
-              <span class="price">$${product.price ?? "-"}</span>
+              ${product.mrp ? `<span class="mrp">${formatMoney(product.mrp)}</span>` : ""}
+              <span class="price">${formatMoney(product.price ?? 0)}</span>
             </div>
           </div>
         </a>
@@ -179,7 +184,7 @@ function renderProducts(products) {
           data-description="${description.replace(/"/g, "&quot;")}"
         >
           <span class="favorite-icon">+</span>
-          <span data-favorite-label>Save</span>
+          <span data-favorite-label>${t("save")}</span>
         </button>
         <button
           class="add-btn"
@@ -188,7 +193,7 @@ function renderProducts(products) {
           data-price="${product.price ?? 0}"
           data-image="${imageUrl}"
         >
-          Add to Cart
+          ${t("addToCart")}
         </button>
       </article>
     `);
@@ -219,7 +224,7 @@ function initCartButtons() {
 
       localStorage.setItem("cart", JSON.stringify(cart));
       updateCartCount();
-      alert("Added to cart");
+      alert(t("addToCart"));
     };
   });
 }
@@ -253,7 +258,7 @@ function applyFavoriteState(button, active) {
   button.setAttribute("aria-pressed", active ? "true" : "false");
   const label = button.querySelector("[data-favorite-label]");
   const icon = button.querySelector(".favorite-icon");
-  if (label) label.textContent = active ? "Saved" : "Save";
+  if (label) label.textContent = t(active ? "savedState" : "save");
   if (icon) icon.textContent = active ? "✓" : "+";
 }
 
