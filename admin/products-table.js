@@ -1,8 +1,10 @@
 import { supabase } from "./supabaseClient.js";
 import { getNormalizedProductImages } from "../image-utils.js";
 import { requireAdminSession } from "./auth-guard.js";
+import { formatMoney, initLocaleExperience } from "../locale.js";
 
 await requireAdminSession();
+initLocaleExperience({ scope: "admin", containerSelector: ".admin-header" });
 
 const tbody = document.getElementById("productsBody");
 
@@ -44,8 +46,8 @@ async function loadProducts() {
         <td>${product.name}</td>
         <td>${product.brands?.name ?? "-"}</td>
         <td>${product.categories?.name ?? "-"}</td>
-        <td>₹${product.price ?? "-"}</td>
-        <td>₹${product.mrp ?? "-"}</td>
+        <td>${formatMoney(product.price ?? 0)}</td>
+        <td>${product.mrp ? formatMoney(product.mrp) : "-"}</td>
         <td>${product.active ? "✅" : "❌"}</td>
         <td>
           <button onclick="editProduct('${product.id}')">Edit</button>
@@ -94,3 +96,4 @@ window.deleteProduct = async id => {
 };
 
 loadProducts();
+window.addEventListener("em:locale-changed", loadProducts);

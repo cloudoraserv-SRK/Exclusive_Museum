@@ -1,8 +1,10 @@
 import { supabase } from "./supabaseClient.js";
 import { getNormalizedProductImages } from "../image-utils.js";
 import { requireAdminSession } from "./auth-guard.js";
+import { formatMoney, initLocaleExperience } from "../locale.js";
 
 await requireAdminSession();
+initLocaleExperience({ scope: "admin", containerSelector: ".admin-header" });
 
 const list = document.getElementById("productsList");
 
@@ -39,7 +41,7 @@ async function loadProducts() {
         <img src="${getImageUrl(getImagePath(product))}" class="product-thumb" alt="${product.name}">
         <div class="product-info">
           <h3>${product.name}</h3>
-          <p>₹${product.price ?? "-"}</p>
+          <p>${formatMoney(product.price ?? 0)}</p>
           <button onclick="editProduct('${product.id}')">Edit</button>
           <button class="danger" onclick="deleteProduct('${product.id}')">Delete</button>
         </div>
@@ -59,3 +61,4 @@ window.deleteProduct = async id => {
 };
 
 loadProducts();
+window.addEventListener("em:locale-changed", loadProducts);

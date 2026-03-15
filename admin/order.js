@@ -1,7 +1,9 @@
 import { supabase } from "./supabaseClient.js";
 import { requireAdminSession } from "./auth-guard.js";
+import { formatMoney, initLocaleExperience } from "../locale.js";
 
 await requireAdminSession();
+initLocaleExperience({ scope: "admin", containerSelector: ".admin-header" });
 
 const table=document.getElementById("ordersTable");
 
@@ -26,7 +28,7 @@ tr.innerHTML=`
 
 <td>${o.email}</td>
 
-<td>$${o.total_amount}</td>
+<td>${formatMoney(o.total_amount || 0)}</td>
 
 <td>${o.payment_method}</td>
 
@@ -101,3 +103,4 @@ alert("Status updated");
 });
 
 loadOrders();
+window.addEventListener("em:locale-changed", loadOrders);
