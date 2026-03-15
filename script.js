@@ -1,5 +1,5 @@
 import { supabase } from "./admin/supabaseClient.js";
-import { initAccountSessionSync, updateAccountUI } from "./products/user-auth.js";
+import { hydrateAccountUIFromSnapshot, initAccountSessionSync, updateAccountUI } from "./products/user-auth.js";
 import { initLocaleExperience } from "./locale.js";
 
 /* ================= INIT ================= */
@@ -8,7 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
   initHamburger();
   initLocaleExperience();
+  hydrateAccountUIFromSnapshot();
   initAccountSessionSync();
+  updateAccountUI();
+});
+
+window.addEventListener("pageshow", () => {
+  updateCartCount();
+  hydrateAccountUIFromSnapshot();
   updateAccountUI();
 });
 
