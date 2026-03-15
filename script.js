@@ -1,10 +1,15 @@
 import { supabase } from "./admin/supabaseClient.js";
+import { initAccountSessionSync, updateAccountUI } from "./products/user-auth.js";
+import { initLocaleExperience } from "./locale.js";
 
 /* ================= INIT ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   updateCartCount();
   initHamburger();
+  initLocaleExperience();
+  initAccountSessionSync();
+  updateAccountUI();
 });
 
 /* ================= CART ================= */
