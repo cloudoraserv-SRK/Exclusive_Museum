@@ -194,7 +194,7 @@ Place Order
 
 <script type="module">
 import { supabase } from "../admin/supabaseClient.js";
-import { getCurrentUser, initAccountSessionSync, updateAccountUI } from "./user-auth.js";
+import { getCurrentUser, hydrateAccountUIFromSnapshot, initAccountSessionSync, updateAccountUI } from "./user-auth.js";
 import { formatMoney, initLocaleExperience, t } from "../locale.js";
 
 const cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -219,6 +219,7 @@ let total = 0;
 let validatedCart = [];
 
 initLocaleExperience();
+hydrateAccountUIFromSnapshot();
 if (summaryHeading) summaryHeading.textContent = "Order Summary";
 if (totalLabel) totalLabel.textContent = t("total");
 
@@ -493,6 +494,11 @@ window.addEventListener("em:locale-changed", () => {
   });
 });
 window.addEventListener("account:updated", async () => {
+  await prefillSignedInCustomer();
+});
+window.addEventListener("pageshow", async () => {
+  updateCartCount();
+  hydrateAccountUIFromSnapshot();
   await prefillSignedInCustomer();
 });
 </script>

@@ -1,6 +1,7 @@
 import { supabase } from "../admin/supabaseClient.js";
 import { getNormalizedProductImages } from "../image-utils.js";
 import { formatMoney, initLocaleExperience, t } from "../locale.js";
+import { hydrateAccountUIFromSnapshot, updateAccountUI } from "./user-auth.js";
 
 const grid = document.getElementById("productsGrid");
 const pageTitle = document.getElementById("collectionTitle");
@@ -11,6 +12,11 @@ let favoritesApi = null;
 boot();
 window.addEventListener("em:locale-changed", () => {
   loadProducts();
+});
+window.addEventListener("pageshow", async () => {
+  updateCartCount();
+  hydrateAccountUIFromSnapshot();
+  await updateAccountUI();
 });
 
 async function boot() {

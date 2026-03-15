@@ -1,6 +1,7 @@
 import { supabase } from "../admin/supabaseClient.js";
 import { getNormalizedProductImages } from "../image-utils.js";
 import { formatMoney, initLocaleExperience, t } from "../locale.js";
+import { hydrateAccountUIFromSnapshot, updateAccountUI } from "./user-auth.js";
 
 const params = new URLSearchParams(location.search);
 const slug = params.get("slug");
@@ -55,12 +56,19 @@ window.addEventListener("em:locale-changed", () => {
   }
 });
 
+window.addEventListener("pageshow", async () => {
+  updateCartCount();
+  hydrateAccountUIFromSnapshot();
+  await updateAccountUI();
+});
+
 async function boot() {
   if (bootStarted) return;
   bootStarted = true;
   initHeader();
   updateCartCount();
   initLocaleExperience();
+  hydrateAccountUIFromSnapshot();
   await loadProduct();
   initCartAction();
   await initEnhancements();

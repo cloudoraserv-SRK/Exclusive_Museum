@@ -1,6 +1,6 @@
 import { supabase } from "../admin/supabaseClient.js";
 import { updateFavoritesCount } from "./favorites.js";
-import { getCurrentUser, initAccountSessionSync, updateAccountUI } from "./user-auth.js";
+import { getCurrentUser, hydrateAccountUIFromSnapshot, initAccountSessionSync, updateAccountUI } from "./user-auth.js";
 import { formatDateTime, formatMoney, initLocaleExperience, t } from "../locale.js";
 
 const historyGrid = document.getElementById("historyGrid");
@@ -167,6 +167,7 @@ async function init() {
   initHeader();
   updateCartCount();
   initLocaleExperience();
+  hydrateAccountUIFromSnapshot();
   initAccountSessionSync();
   updateFavoritesCount();
   await updateAccountUI();
@@ -178,6 +179,13 @@ async function init() {
   });
   window.addEventListener("em:locale-changed", loadOrderHistory);
 }
+
+window.addEventListener("pageshow", async () => {
+  updateCartCount();
+  hydrateAccountUIFromSnapshot();
+  await updateAccountUI();
+  await loadOrderHistory();
+});
 
 function handleHistoryError(error) {
   console.error(error);

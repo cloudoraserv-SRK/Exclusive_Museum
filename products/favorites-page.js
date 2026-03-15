@@ -1,5 +1,5 @@
 import { getFavorites, toggleFavorite, updateFavoritesCount } from "./favorites.js";
-import { initAccountSessionSync, updateAccountUI } from "./user-auth.js";
+import { hydrateAccountUIFromSnapshot, initAccountSessionSync, updateAccountUI } from "./user-auth.js";
 import { formatMoney, initLocaleExperience } from "../locale.js";
 
 const favoritesGrid = document.getElementById("favoritesGrid");
@@ -28,6 +28,7 @@ function init() {
   initHeader();
   updateCartCount();
   initLocaleExperience();
+  hydrateAccountUIFromSnapshot();
   initAccountSessionSync();
   updateFavoritesCount();
   updateAccountUI();
@@ -38,6 +39,13 @@ function init() {
   window.addEventListener("em:locale-changed", renderFavorites);
   renderFavorites();
 }
+
+window.addEventListener("pageshow", async () => {
+  updateCartCount();
+  hydrateAccountUIFromSnapshot();
+  await updateAccountUI();
+  renderFavorites();
+});
 
 function renderFavorites() {
   const favorites = getFavorites();

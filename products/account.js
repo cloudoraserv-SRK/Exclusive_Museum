@@ -1,5 +1,5 @@
 import { getFavoriteCount, getWishlistSyncMode, updateFavoritesCount } from "./favorites.js";
-import { initAccountSessionSync, signInWithGoogle, signOutUser, updateAccountUI } from "./user-auth.js";
+import { hydrateAccountUIFromSnapshot, initAccountSessionSync, signInWithGoogle, signOutUser, updateAccountUI } from "./user-auth.js";
 import { initLocaleExperience } from "../locale.js";
 
 const accountHeading = document.getElementById("accountHeading");
@@ -85,6 +85,7 @@ async function init() {
   initHeader();
   updateCartCount();
   initLocaleExperience();
+  hydrateAccountUIFromSnapshot();
   initAccountSessionSync();
   updateFavoritesCount();
   await renderAccount();
@@ -97,6 +98,11 @@ async function init() {
     await renderAccount();
   });
 }
+
+window.addEventListener("pageshow", async () => {
+  hydrateAccountUIFromSnapshot();
+  await renderAccount();
+});
 
 googleLoginBtn?.addEventListener("click", async () => {
   accountMessage.textContent = "Redirecting to Google...";
