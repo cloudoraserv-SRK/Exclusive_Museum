@@ -127,8 +127,7 @@ function renderImages(images) {
     thumbs.appendChild(image);
   });
 }
-
-async function loadMaterials(productId) {
+async function loadMaterials(productId, product) {
   const { data } = await supabase
     .from("product_materials")
     .select("*")
@@ -140,27 +139,93 @@ async function loadMaterials(productId) {
     return;
   }
 
-  const rows = [
-    ["Gold Type", data.gold_type],
-    ["Gold Weight", data.gold_weight ? `${data.gold_weight} g` : null],
-    ["Diamond Carat", data.diamond_carat],
-    ["Diamond Count", data.diamond_count],
-    ["Wood Type", data.wood_type]
-  ].filter(([, value]) => value);
+  // 🔥 AUTO DETECT CATEGORY
+  const category = (product.category_name || "").toLowerCase();
 
-  materialsGrid.innerHTML = rows.map(([label, value]) => `
-    <div class="spec-item">
-      <span>${label}</span>
-      <strong>${value}</strong>
-    </div>
-  `).join("");
+  let rows = [];
+
+  // 🧵 CARPET / TEXTILE
+  if (category.includes("carpet") || category.includes("textile")) {
+    rows = [
+      ["Material", data.material],
+      ["Weave Type", data.weave_type],
+      ["Fabric Type", data.fabric_type],
+      ["Origin", data.origin],
+      ["Finish", data.finish]
+    ];
+  }
+
+  // ⌚ WATCH / JEWELLERY
+  else if (category.includes("watch") || category.includes("jewellery")) {
+    rows = [
+      ["Gold Type", data.gold_type],
+      ["Gold Weight", data.gold_weight],
+      ["Diamond Quality", data.diamond_quality],
+      ["Diamond Count", data.diamond_count],
+      ["Wood Type", data.wood_type]
+    ];
+  }
+
+  // 🪵 WOOD
+  else if (category.includes("wood")) {
+    rows = [
+      ["Wood Type", data.wood_type],
+      ["Finish", data.finish],
+      ["Origin", data.origin]
+    ];
+  }
+
+  // 🧱 METAL
+  else if (category.includes("metal")) {
+    rows = [
+      ["Material", data.material],
+      ["Finish", data.finish],
+      ["Origin", data.origin]
+    ];
+  }
+
+  // 👜 LEATHER
+  else if (category.includes("leather")) {
+    rows = [
+      ["Leather Type", data.material],
+      ["Finish", data.finish],
+      ["Origin", data.origin]
+    ];
+  }
+
+  // 🌿 DEFAULT (fallback)
+  else {
+    rows = Object.entries(data)
+      .filter(([key, value]) => value && key !== "id" && key !== "product_id")
+      .map(([key, value]) => [formatLabel(key), value]);
+  }
+
+  // साफ करो empty values
+  rows = rows.filter(([, value]) => value);
+
+  materialsGrid.innerHTML = rows.length
+    ? rows.map(([label, value]) => `
+        <div class="spec-item">
+          <span>${label}</span>
+          <strong>${value}</strong>
+        </div>
+      `).join("")
+    : "<p>No materials info available.</p>";
 }
-
+function formatLabel(key) {
+  return key
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, l => l.toUpperCase());
+}
 async function loadCustomization(productId) {
+  console.log("CUSTOM FETCH ID:", productId);
+
   const { data = [] } = await supabase
     .from("product_customization")
     .select("custom_option")
     .eq("product_id", productId);
+
+  console.log("CUSTOM DATA:", data);
 
   if (!data.length) {
     customGrid.innerHTML = "<p>No customization options available.</p>";
@@ -175,7 +240,9 @@ async function loadCustomization(productId) {
 }
 
 async function loadSpecs(productId, product) {
-  const rows = [
+  console.log("SPECS FETCH ID:", productId);
+
+  const baseRows = [
     ["Case Size", product.case_size],
     ["Movement", product.movement],
     ["Glass", product.glass],
@@ -183,14 +250,16 @@ async function loadSpecs(productId, product) {
     ["Crafting Time", product.crafting_time]
   ].filter(([, value]) => value);
 
-  const { data = [] } = await supabase
+  const { data: specsData = [] } = await supabase
     .from("product_specs")
     .select("spec_name,spec_value")
     .eq("product_id", productId);
 
+  console.log("SPECS DATA:", specsData);
+
   const allRows = [
-    ...rows,
-    ...data.map(item => [item.spec_name, item.spec_value])
+    ...baseRows,
+    ...specsData.map(item => [item.spec_name, item.spec_value])
   ];
 
   specGrid.innerHTML = allRows.length
@@ -324,7 +393,7 @@ async function loadProduct() {
 
   renderImages(currentImages);
   await loadSpecs(data.id, data);
-  await loadMaterials(data.id);
+  await loadMaterials(data.id, productRecord);
   await loadCustomization(data.id);
   await loadReviews(data.id);
   await loadFAQ(data.id);

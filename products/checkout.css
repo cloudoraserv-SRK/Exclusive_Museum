@@ -292,3 +292,26 @@ border:1px solid #444;
 
 }
 
+.whatsapp-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 14px 24px;
+  background: #25D366;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-btn:hover {
+  background: #1ebe5d;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+}
+
+.checkout-box p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+}
